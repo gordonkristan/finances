@@ -6,6 +6,19 @@ An app used to manage budgets, expenses, and spending.
 
 Start the webpack dev server using `npm start`. Then navigate to `localhost:8080`. This currently uses hash-based routing, so if you wanted to navigate to, for instance, the expenses page: [http://localhost:8080/#/budget/expenses](http://localhost:8080/#/budget/expenses)
 
+### Deploying
+
+```bash
+# install firebase tools
+npm i -g firebase-tools
+# authenticate
+firebase login
+# build the latest version of the app
+webpack
+# deploy
+firebase deploy
+```
+
 ### User Requirements
 
 - [ ] Must be mobile-compatible
