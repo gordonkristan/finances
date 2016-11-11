@@ -4,7 +4,7 @@ An app used to manage budgets, expenses, and spending.
 
 ### Developing
 
-Start the webpack dev server using `npm start`. Then navigate to `localhost:8080`. This currently uses hash-based routing, so if you wanted to navigate to, for instance, the expenses page: [http://localhost:8080/#/budget/expenses](http://localhost:8080/#/budget/expenses)
+First install webpack-dev-server with `npm i -g npm-dev-server`. Then start the webpack dev server using `npm start`. Then navigate to `localhost:8080`. This currently uses hash-based routing, so if you wanted to navigate to, for instance, the expenses page: [http://localhost:8080/#/budget/expenses](http://localhost:8080/#/budget/expenses)
 
 ### Deploying
 
