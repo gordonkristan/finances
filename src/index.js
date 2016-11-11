@@ -1,3 +1,7 @@
+window.jQuery = window.$ = require('jQuery');
+window.Tether = require('tether');
+require('bootstrap');
+
 import React from 'react';
 // Shim this so we don't have to import it everywhere we use it
 window.React = React;
