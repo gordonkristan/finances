@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router';
 
 const App = React.createClass({
 	render() {
@@ -6,6 +7,7 @@ const App = React.createClass({
 			<div>
 				<nav className='navbar navbar-dark navbar-fixed-top bg-inverse'>
 					<button
+						id='navbar-hamburger-button'
 						className='navbar-toggler'
 						type='button'
 						data-toggle='collapse'
@@ -17,13 +19,30 @@ const App = React.createClass({
 								<a className='nav-link' style={{ color: '#bbb' }}>Home</a>
 							</li>
 							<li className='nav-item'>
-								<a className='nav-link' style={{ color: '#bbb' }}>Budget</a>
+								<Link to='/budget/expenses' className='nav-link' style={{ color: '#bbb' }}>
+									Budget
+								</Link>
 							</li>
 							<li className='nav-item'>
-								<a className='nav-link' style={{ color: '#bbb' }}>Expenses</a>
+								<Link
+									to='/budget/add-expense'
+									className='nav-link'
+									style={{ color: '#bbb', marginLeft: '1em' }}
+								>
+									Add Expense
+								</Link>
 							</li>
 							<li className='nav-item'>
-								<a className='nav-link' style={{ color: '#bbb' }}>Log Purchase</a>
+								<a className='nav-link' style={{ color: '#bbb' }}>Purchases</a>
+							</li>
+							<li className='nav-item'>
+								<Link
+									to='/purchases/add-purchase'
+									className='nav-link'
+									style={{ color: '#bbb', marginLeft: '1em' }}
+								>
+									Log Purchase
+								</Link>
 							</li>
 						</ul>
 					</div>

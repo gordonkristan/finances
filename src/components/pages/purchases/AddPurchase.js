@@ -1,6 +1,6 @@
 import React from 'react';
 
-const App = React.createClass({
+const AddPurchase = React.createClass({
 	render() {
 		return (
 			<div>
@@ -44,4 +44,4 @@ const App = React.createClass({
 	}
 });
 
-export default App;
+export default AddPurchase;

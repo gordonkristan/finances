@@ -1,4 +1,4 @@
-window.jQuery = window.$ = require('jQuery');
+const $ = window.jQuery = window.$ = require('jQuery');
 window.Tether = require('tether');
 require('bootstrap');
 
@@ -12,7 +12,8 @@ import { Router, Route, hashHistory } from 'react-router';
 import App from './components/App';
 import SignIn from './components/pages/SignIn';
 import Expenses from './components/pages/budget/Expenses';
-import AddExpenseForm from './components/AddExpenseForm';
+import AddExpense from './components/pages/budget/AddExpense';
+import AddPurchase from './components/pages/purchases/AddPurchase';
 
 const enterApp = (nextState, replace, callback) => {
 	firebase.auth().onAuthStateChanged((user) => {
@@ -29,14 +30,25 @@ const enterApp = (nextState, replace, callback) => {
 	});
 };
 
+const routeChange = (prevState, nextState, replace) => {
+	const button = $('#navbar-hamburger-button');
+
+	if (button.attr('aria-expanded') === 'true') {
+		button.click();
+	}
+};
+
 const page = (
 	<Router history={hashHistory}>
-		<Route path='/' component={App} onEnter={enterApp}>
+		<Route path='/' component={App} onEnter={enterApp} onChange={routeChange}>
 			<Route path='/sign-in' component={SignIn} />
 			<Route path='/budget'>
 				<Route path='/budget/expenses' component={Expenses} />
+				<Route path='/budget/add-expense' component={AddExpense} />
 			</Route>
-			<Route path='/add-expense' component={AddExpenseForm} />
+			<Route path='/purchases'>
+				<Route path='/purchases/add-purchase' component={AddPurchase} />
+			</Route>
 		</Route>
 	</Router>
 );
