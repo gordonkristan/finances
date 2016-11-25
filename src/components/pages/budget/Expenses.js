@@ -1,6 +1,5 @@
 import _ from 'lodash';
 import React from 'react';
-import Expense from '../../Expense';
 
 const Expenses = React.createClass({
 
@@ -24,7 +23,7 @@ const Expenses = React.createClass({
 
 	expensesUpdated(expensesSnapshot) {
 		this.setState({
-			expenses: _.values(expensesSnapshot.val())
+			expenses: expensesSnapshot.val()
 		});
 	},
 
@@ -33,12 +32,24 @@ const Expenses = React.createClass({
 	render() {
 		return (
 			<div>
-				{this.state.expenses.map((expense, i) => {
-					return (
-						<Expense key={i} name={expense.name} amount={expense.amount}
-						         frequency={expense.frequency}/>
-					);
-				})}
+				<table className='table table-striped'>
+					<thead>
+						<tr>
+							<th>Name</th>
+							<th>Cost</th>
+						</tr>
+					</thead>
+					<tbody>
+						{_.map(this.state.expenses, (expense, id) => {
+							return (
+								<tr key={id}>
+									<td>{expense.name}</td>
+									<td>{expense.amount}</td>
+								</tr>
+							);
+						})}
+					</tbody>
+				</table>
 			</div>
 		);
 	}
