@@ -9,6 +9,7 @@ const App = React.createClass({
 			<div>
 				<nav className='navbar navbar-dark navbar-fixed-top bg-inverse'>
 					<button
+						id='navbar-hamburger-button'
 						className='navbar-toggler hidden-lg-up'
 						type='button'
 						data-toggle='collapse'
