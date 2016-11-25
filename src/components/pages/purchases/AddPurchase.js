@@ -4,7 +4,7 @@ const AddPurchase = React.createClass({
 	render() {
 		return (
 			<div>
-				<h4>Add Expense</h4>
+				<h4>Add Purchase</h4>
 				<form>
 					<div className='form-group'>
 						<label htmlFor='expense-add-cost'>Cost</label>

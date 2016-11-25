@@ -1,4 +1,6 @@
 import React from 'react';
+import NavLink from './util/NavLink';
+
 import { Link } from 'react-router';
 
 const App = React.createClass({
@@ -7,43 +9,20 @@ const App = React.createClass({
 			<div>
 				<nav className='navbar navbar-dark navbar-fixed-top bg-inverse'>
 					<button
-						id='navbar-hamburger-button'
-						className='navbar-toggler'
+						className='navbar-toggler hidden-lg-up'
 						type='button'
 						data-toggle='collapse'
-						data-target='#navbar'
+					    data-target='#responsive-navbar'
 					/>
-					<div className='collapse' id='navbar'>
-						<ul className='nav nav-pills nav-stacked'>
-							<li className='nav-item'>
-								<a className='nav-link' style={{ color: '#bbb' }}>Home</a>
-							</li>
-							<li className='nav-item'>
-								<Link to='/budget/expenses' className='nav-link' style={{ color: '#bbb' }}>
-									Budget
-								</Link>
-							</li>
-							<li className='nav-item'>
-								<Link
-									to='/budget/add-expense'
-									className='nav-link'
-									style={{ color: '#bbb', marginLeft: '1em' }}
-								>
-									Add Expense
-								</Link>
-							</li>
-							<li className='nav-item'>
-								<a className='nav-link' style={{ color: '#bbb' }}>Purchases</a>
-							</li>
-							<li className='nav-item'>
-								<Link
-									to='/purchases/add-purchase'
-									className='nav-link'
-									style={{ color: '#bbb', marginLeft: '1em' }}
-								>
-									Log Purchase
-								</Link>
-							</li>
+					<div className='collapse navbar-toggleable-md' id='responsive-navbar'>
+						<Link className='navbar-brand hidden-sm-down' to='/'>
+							Finances
+						</Link>
+						<ul className='nav navbar-nav'>
+							<NavLink to='/budget/expenses'>Budget</NavLink>
+							<NavLink to='/budget/add-expense'>Add Expense</NavLink>
+							<NavLink to='/'>Purchases</NavLink>
+							<NavLink to='/purchases/add-purchase'>Log Purchase</NavLink>
 						</ul>
 					</div>
 				</nav>
