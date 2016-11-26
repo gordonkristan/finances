@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import React from 'react';
+import moment from 'moment';
 
 const AddPurchase = React.createClass({
 
@@ -9,7 +10,7 @@ const AddPurchase = React.createClass({
 			cost: '',
 			category: undefined,
 			description: '',
-			date: ''
+			date: moment().format('YYYY-MM-DD')
 		};
 	},
 
