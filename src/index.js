@@ -1,4 +1,4 @@
-const $ = window.jQuery = window.$ = require('jQuery');
+const $ = window.jQuery = window.$ = require('jquery');
 window.Tether = require('tether');
 require('bootstrap');
 

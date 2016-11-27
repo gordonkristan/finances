@@ -15,5 +15,10 @@ module.exports = {
 		loaders: [
 			{ test: /\.js$/, loader: 'babel' }
 		]
+	},
+	resolve: {
+		alias: {
+			'app': path.join(process.cwd(), 'src')
+		}
 	}
 };

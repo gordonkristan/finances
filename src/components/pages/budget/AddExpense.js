@@ -35,7 +35,7 @@ const App = React.createClass({
 
 	render() {
 		return (
-			<div>
+			<div className='col-xs-12 col-md-8 offset-md-2'>
 				<h4>Add Expense</h4>
 				<form>
 					<div className='form-group'>

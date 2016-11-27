@@ -1,5 +1,11 @@
-import _ from 'lodash';
 import React from 'react';
+import Expense from 'app/models/expense';
+
+import { isMobile } from 'app/util/mobile';
+import {
+	formatDollarAmount,
+	formatBillingFrequency
+} from 'app/util/formatters';
 
 const Expenses = React.createClass({
 
@@ -22,29 +28,57 @@ const Expenses = React.createClass({
 	////////////////////////////////////////
 
 	expensesUpdated(expensesSnapshot) {
-		this.setState({
-			expenses: expensesSnapshot.val()
+		const expenses = [];
+
+		expensesSnapshot.forEach((expenseSnapshot) => {
+			expenses.push(new Expense(expenseSnapshot));
 		});
+
+		this.setState({ expenses });
 	},
 
 	////////////////////////////////////////
 
 	render() {
 		return (
-			<div>
+			<div className='col-xs-12'>
 				<table className='table table-striped'>
 					<thead>
 						<tr>
 							<th>Name</th>
 							<th>Cost</th>
+							{!isMobile && <th>Frequency</th>}
+							{!isMobile && <th>AutoPay</th>}
+							{!isMobile && <th>Fixed Cost</th>}
 						</tr>
 					</thead>
 					<tbody>
-						{_.map(this.state.expenses, (expense, id) => {
+						{this.state.expenses.map((expense) => {
 							return (
-								<tr key={id}>
+								<tr key={expense.id}>
 									<td>{expense.name}</td>
-									<td>{expense.amount}</td>
+									<td>{formatDollarAmount(expense.cost)}</td>
+									{!isMobile && <td>{formatBillingFrequency(expense.frequency)}</td>}
+									{!isMobile &&
+										<td>
+											<input
+												type='checkbox'
+												className='form-check-input'
+												checked={expense.autoPay}
+												readOnly={true}
+											/>
+										</td>
+									}
+									{!isMobile &&
+										<td>
+											<input
+												type='checkbox'
+												className='form-check-input'
+												checked={expense.fixedCost}
+												readOnly={true}
+											/>
+										</td>
+									}
 								</tr>
 							);
 						})}
