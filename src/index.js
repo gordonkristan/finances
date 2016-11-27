@@ -7,13 +7,15 @@ import React from 'react';
 window.React = React;
 
 import ReactDOM from 'react-dom';
-import { Router, Route, hashHistory } from 'react-router';
+import { Router, Route, IndexRoute, hashHistory } from 'react-router';
 
 import App from './components/App';
+import Home from './components/pages/Home';
 import SignIn from './components/pages/SignIn';
-import Expenses from './components/pages/budget/Expenses';
+import Budget from './components/pages/budget/Budget';
 import AddExpense from './components/pages/budget/AddExpense';
 import AddPurchase from './components/pages/purchases/AddPurchase';
+import ExpenseDetails from './components/pages/budget/expenses/Details';
 
 const enterApp = (nextState, replace, callback) => {
 	firebase.auth().onAuthStateChanged((user) => {
@@ -41,10 +43,12 @@ const routeChange = (prevState, nextState, replace) => {
 const page = (
 	<Router history={hashHistory}>
 		<Route path='/' component={App} onEnter={enterApp} onChange={routeChange}>
+			<IndexRoute component={Home} />
 			<Route path='/sign-in' component={SignIn} />
 			<Route path='/budget'>
-				<Route path='/budget/expenses' component={Expenses} />
+				<IndexRoute component={Budget} />
 				<Route path='/budget/add-expense' component={AddExpense} />
+				<Route path='/budget/expenses/:expenseId/details' component={ExpenseDetails} />
 			</Route>
 			<Route path='/purchases'>
 				<Route path='/purchases/add-purchase' component={AddPurchase} />
