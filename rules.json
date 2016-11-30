@@ -4,7 +4,12 @@
 		"data": {
 			"$user_id": {
 				".read": "auth.uid === $user_id",
-				".write": "auth.uid === $user_id"
+				".write": "auth.uid === $user_id",
+				"transactions": {
+					"purchases": {
+						".indexOn": ["date"]
+					}
+				}
 			}
 		}
 	}

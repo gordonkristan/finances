@@ -1,38 +1,32 @@
-class Expense {
-	constructor(snapshot) {
-		this._snapshot = snapshot;
-	}
+import Model from './model';
 
-	get id() {
-		return this._snapshot.key;
-	}
-
+class Expense extends Model {
 	get name() {
-		return this._snapshot.val().name;
+		return this._val.name;
 	}
 
 	get cost() {
-		return this._snapshot.val().amount;
+		return this._val.amount;
 	}
 
 	get frequency() {
-		return this._snapshot.val().frequency;
+		return this._val.frequency;
 	}
 
 	get autoPay() {
-		return (this._snapshot.val().autoPay || false);
+		return (this._val.autoPay || false);
 	}
 
 	set autoPay(autoPay) {
-		this._snapshot.ref.child('autoPay').set(!!autoPay);
+		this._updateValue('autoPay', !!autoPay);
 	}
 
 	get fixedCost() {
-		return (this._snapshot.val().fixedCost || false);
+		return (this._val.fixedCost || false);
 	}
 
 	set fixedCost(fixedCost) {
-		this._snapshot.ref.child('fixedCost').set(!!fixedCost);
+		this._updateValue('fixedCost', !!fixedCost);
 	}
 }
 

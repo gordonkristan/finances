@@ -80,9 +80,9 @@ const AddPurchase = React.createClass({
 						    value={this.state.category}
 						    onChange={this.updateValue.bind(null, 'category')}
 						>
-							{_.map(this.state.expenses, (expense, id) => {
+							{this.state.expenses.map((expense) => {
 								return (
-									<option value={id} key={id}>
+									<option value={expense.id} key={expense.id}>
 										{expense.name}
 									</option>
 								);

@@ -3,9 +3,6 @@ window.Tether = require('tether');
 require('bootstrap');
 
 import React from 'react';
-// Shim this so we don't have to import it everywhere we use it
-window.React = React;
-
 import ReactDOM from 'react-dom';
 import { Router, Route, IndexRoute, hashHistory } from 'react-router';
 
@@ -16,6 +13,8 @@ import Budget from './components/pages/budget/Budget';
 import AddExpense from './components/pages/budget/AddExpense';
 import AddPurchase from './components/pages/purchases/AddPurchase';
 import ExpenseDetails from './components/pages/budget/expenses/Details';
+import PurchasesTable from './components/pages/purchases/PurchasesTable';
+import PurchaseDetails from './components/pages/purchases/PurchaseDetails';
 
 const enterApp = (nextState, replace, callback) => {
 	firebase.auth().onAuthStateChanged((user) => {
@@ -51,7 +50,9 @@ const page = (
 				<Route path='/budget/expenses/:expenseId/details' component={ExpenseDetails} />
 			</Route>
 			<Route path='/purchases'>
+				<IndexRoute component={PurchasesTable} />
 				<Route path='/purchases/add-purchase' component={AddPurchase} />
+				<Route path='/purchases/:purchaseId/details' component={PurchaseDetails} />
 			</Route>
 		</Route>
 	</Router>

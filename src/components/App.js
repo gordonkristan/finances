@@ -22,7 +22,7 @@ const App = React.createClass({
 						<ul className='nav navbar-nav'>
 							<NavLink to='/budget'>Budget</NavLink>
 							<NavLink to='/budget/add-expense'>Add Expense</NavLink>
-							<NavLink to='/'>Purchases</NavLink>
+							<NavLink to='/purchases'>Purchases</NavLink>
 							<NavLink to='/purchases/add-purchase'>Log Purchase</NavLink>
 						</ul>
 					</div>
