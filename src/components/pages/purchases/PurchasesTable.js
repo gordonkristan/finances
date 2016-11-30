@@ -10,6 +10,10 @@ import { formatDollarAmount } from 'app/util/formatters';
 
 const PurchasesTable = React.createClass({
 
+	contextTypes: {
+		router: React.PropTypes.object
+	},
+
 	getInitialState() {
 		return {
 			purchases: [],
@@ -82,7 +86,12 @@ const PurchasesTable = React.createClass({
 			];
 		});
 
-		return { headers, data };
+		const onRowClicked = (row, index) => {
+			const purchase = this.state.purchases[index];
+			this.context.router.push(`/purchases/${purchase.id}/details`);
+		};
+
+		return { headers, data, onRowClicked };
 	},
 
 	renderDesktopTable() {

@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import React from 'react';
 import Expense from 'app/models/expense';
 import Purchase from 'app/models/purchase';

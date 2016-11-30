@@ -11,6 +11,10 @@ import {
 
 const ExpensesTable = React.createClass({
 
+	contextTypes: {
+		router: React.PropTypes.object
+	},
+
 	getInitialState() {
 		return {
 			expenses: []
@@ -41,7 +45,28 @@ const ExpensesTable = React.createClass({
 
 	////////////////////////////////////////
 
-	render() {
+	renderMobileTable() {
+		const headers = [
+			{ label: 'Name' },
+			{ label: 'Cost', justification: 'right' }
+		];
+
+		const data = this.state.expenses.map((expense) => {
+			return [
+				expense.name,
+				formatDollarAmount(expense.cost)
+			];
+		});
+
+		const onRowClicked = (row, index) => {
+			const expense = this.state.expenses[index];
+			this.context.router.push(`/budget/expenses/${expense.id}/details`);
+		};
+
+		return { headers, data, onRowClicked };
+	},
+
+	renderDesktopTable() {
 		const headers = [
 			{ label: 'Name' },
 			{ label: 'Cost', justification: 'right' },
@@ -49,7 +74,7 @@ const ExpensesTable = React.createClass({
 			{ label: 'AutoPay', justification: 'right' },
 			{ label: 'Fixed Cost', justification: 'right' },
 			{ label: '', justification: 'center' }
-		].slice(0, isMobile ? 2 : Infinity);
+		];
 
 		const data = this.state.expenses.map((expense) => {
 			return [
@@ -61,10 +86,16 @@ const ExpensesTable = React.createClass({
 				<Link to={`/budget/expenses/${expense.id}/details`}>
 					<i className='fa fa-cog' />
 				</Link>
-			].slice(0, isMobile ? 2 : Infinity);
+			];
 		});
 
-		return <Table headers={headers} data={data} />;
+		return { headers, data };
+	},
+
+	render() {
+		const props = (isMobile ? this.renderMobileTable() : this.renderDesktopTable());
+
+		return <Table {...props} />;
 	}
 
 });

@@ -6,7 +6,14 @@ const Table = React.createClass({
 			label: React.PropTypes.string.isRequired,
 			justification: React.PropTypes.oneOf(['left', 'center', 'right'])
 		})).isRequired,
-		data: React.PropTypes.arrayOf(React.PropTypes.arrayOf(React.PropTypes.node.isRequired)).isRequired
+		data: React.PropTypes.arrayOf(React.PropTypes.arrayOf(React.PropTypes.node.isRequired)).isRequired,
+		onRowClicked: React.PropTypes.func
+	},
+
+	getDefaultProps() {
+		return {
+			onRowClicked() {}
+		};
 	},
 
 	render() {
@@ -25,8 +32,10 @@ const Table = React.createClass({
 				</thead>
 				<tbody>
 					{this.props.data.map((row, index) => {
+						const rowAction = this.props.onRowClicked.bind(null, row, index);
+
 						return (
-							<tr key={index}>
+							<tr key={index} onClick={rowAction} onTouchEnd={rowAction}>
 								{row.map((cell, index) => {
 									const { justification = 'left' } = this.props.headers[index];
 
