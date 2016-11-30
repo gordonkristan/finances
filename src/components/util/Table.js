@@ -35,7 +35,7 @@ const Table = React.createClass({
 						const rowAction = this.props.onRowClicked.bind(null, row, index);
 
 						return (
-							<tr key={index} onClick={rowAction} onTouchEnd={rowAction}>
+							<tr key={index} onClick={rowAction}>
 								{row.map((cell, index) => {
 									const { justification = 'left' } = this.props.headers[index];
 
