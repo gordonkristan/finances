@@ -21,9 +21,9 @@ const Table = React.createClass({
 			<table className='table table-striped'>
 				<thead>
 					<tr>
-						{this.props.headers.map(({ label, justification = 'left' }) => {
+						{this.props.headers.map(({ label, justification = 'left' }, index) => {
 							return (
-								<th style={{textAlign: justification}} key={label}>
+								<th style={{textAlign: justification}} key={index}>
 									{label}
 								</th>
 							);
@@ -32,10 +32,8 @@ const Table = React.createClass({
 				</thead>
 				<tbody>
 					{this.props.data.map((row, index) => {
-						const rowAction = this.props.onRowClicked.bind(null, row, index);
-
 						return (
-							<tr key={index} onClick={rowAction}>
+							<tr key={index} onClick={this.props.onRowClicked.bind(null, row, index)}>
 								{row.map((cell, index) => {
 									const { justification = 'left' } = this.props.headers[index];
 

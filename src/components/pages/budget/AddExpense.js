@@ -6,15 +6,22 @@ const App = React.createClass({
 		return {
 			name: '',
 			cost: '',
-			frequency: 'monthly'
+			frequency: 'monthly',
+			autoPay: false,
+			fixedCost: false
 		};
 	},
 
 	////////////////////////////////////////
 
 	onValueChange(name, event) {
+		let value = event.target.value;
+		if (name === 'autoPay' || name === 'fixedCost') {
+			value = event.target.checked;
+		}
+
 		this.setState({
-			[name]: event.target.value
+			[name]: value
 		});
 	},
 
@@ -22,7 +29,10 @@ const App = React.createClass({
 		const expense = {
 			name: this.state.name.trim(),
 			amount: parseInt(this.state.cost, 10),
-			frequency: this.state.frequency
+			frequency: this.state.frequency,
+			isDisabled: false,
+			autoPay: this.state.autoPay,
+			fixedCost: this.state.fixedCost
 		};
 
 		const userId = firebase.auth().currentUser.uid;
@@ -74,6 +84,30 @@ const App = React.createClass({
 							<option value='biannually'>Biannually</option>
 							<option value='annually'>Annually</option>
 						</select>
+					</div>
+					<div className='form-check'>
+						<label className='form-check-label' htmlFor='add-expense-auto-pay'>
+							<input
+								id='add-expense-auto-pay'
+								type='checkbox'
+								className='form-check-input'
+								checked={this.state.autoPay}
+								onChange={this.onValueChange.bind(null, 'autoPay')}
+							/>
+							&nbsp;AutoPay?
+						</label>
+					</div>
+					<div className='form-check'>
+						<label className='form-check-label' htmlFor='add-expense-fixed-cost'>
+							<input
+								id='add-expense-fixed-cost'
+								type='checkbox'
+								className='form-check-input'
+								checked={this.state.fixedCost}
+								onChange={this.onValueChange.bind(null, 'fixedCost')}
+							/>
+							&nbsp;Fixed Cost?
+						</label>
 					</div>
 					<button className='btn btn-success' onClick={this.add}>
 						Add

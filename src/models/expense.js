@@ -28,6 +28,14 @@ class Expense extends Model {
 	set fixedCost(fixedCost) {
 		this._updateValue('fixedCost', !!fixedCost);
 	}
+
+	get isDisabled() {
+		return !!this._val.isDisabled;
+	}
+
+	set isDisabled(disabled) {
+		this._updateValue('isDisabled', disabled);
+	}
 }
 
 export default Expense;

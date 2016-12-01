@@ -37,10 +37,20 @@ const ExpensesTable = React.createClass({
 		const expenses = [];
 
 		expensesSnapshot.forEach((expenseSnapshot) => {
-			expenses.push(new Expense(expenseSnapshot));
+			const expense = new Expense(expenseSnapshot);
+
+			if (!expense.isDisabled) {
+				expenses.push(expense);
+			}
 		});
 
 		this.setState({ expenses });
+	},
+
+	disableExpense(expense) {
+		if (window.confirm('Are you sure you want to remove this expense?')) {
+			expense.isDisabled = true;
+		}
 	},
 
 	////////////////////////////////////////
@@ -73,6 +83,7 @@ const ExpensesTable = React.createClass({
 			{ label: 'Frequency', justification: 'right' },
 			{ label: 'AutoPay', justification: 'right' },
 			{ label: 'Fixed Cost', justification: 'right' },
+			{ label: '', justification: 'center' },
 			{ label: '', justification: 'center' }
 		];
 
@@ -85,7 +96,12 @@ const ExpensesTable = React.createClass({
 				<input type='checkbox' className='form-check-input' checked={expense.fixedCost} readOnly={true} />,
 				<Link to={`/budget/expenses/${expense.id}/details`}>
 					<i className='fa fa-cog' />
-				</Link>
+				</Link>,
+				<i
+					className='fa fa-ban'
+					style={{cursor: 'pointer', color: 'red'}}
+					onClick={this.disableExpense.bind(null, expense)}
+				/>
 			];
 		});
 
