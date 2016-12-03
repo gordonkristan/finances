@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import React from 'react';
 import moment from 'moment';
+import Expense from 'app/models/expense';
 
 const AddPurchase = React.createClass({
 
@@ -27,8 +28,15 @@ const AddPurchase = React.createClass({
 	////////////////////////////////////////
 
 	expensesUpdated(expensesSnapshot) {
+		const expenses = [];
+
+		expensesSnapshot.forEach((expenseSnapshot) => {
+			expenses.push(new Expense(expenseSnapshot));
+		});
+
 		this.setState({
-			expenses: expensesSnapshot.val()
+			expenses,
+			category: (this.state.category || expenses[0].id)
 		});
 	},
 
