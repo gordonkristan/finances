@@ -72,7 +72,9 @@ const PurchasesTable = React.createClass({
 		const data = purchases.map((purchase) => {
 			return [
 				purchase.date.format('MMM D'),
-				this.getExpenseName(purchase.expenseId),
+				<Link to={`/purchases/by-expense/${purchase.expenseId}`}>
+					{this.getExpenseName(purchase.expenseId)}
+				</Link>,
 				purchase.description,
 				formatDollarAmount(purchase.cost),
 				<Link to={`/purchases/${purchase.id}/details`}>
