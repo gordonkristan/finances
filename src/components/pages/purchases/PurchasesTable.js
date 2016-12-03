@@ -80,7 +80,7 @@ const PurchasesTable = React.createClass({
 
 		const data = this.state.purchases.map((purchase) => {
 			return [
-				purchase.date.format('MMM d'),
+				purchase.date.format('MMM D'),
 				this.getExpenseName(purchase.expenseId),
 				formatDollarAmount(purchase.cost)
 			];
