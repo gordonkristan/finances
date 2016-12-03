@@ -27,7 +27,7 @@ class Purchase extends Model {
 	}
 
 	get expenseId() {
-		return this._val.category;
+		return this._val.expenseId;
 	}
 
 	set expenseId(expenseId) {

@@ -28,7 +28,7 @@ const App = React.createClass({
 	add() {
 		const expense = {
 			name: this.state.name.trim(),
-			amount: parseInt(this.state.cost, 10),
+			cost: parseInt(this.state.cost, 10),
 			frequency: this.state.frequency,
 			isDisabled: false,
 			autoPay: this.state.autoPay,

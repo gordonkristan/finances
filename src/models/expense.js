@@ -6,7 +6,7 @@ class Expense extends Model {
 	}
 
 	get cost() {
-		return this._val.amount;
+		return this._val.cost;
 	}
 
 	get frequency() {

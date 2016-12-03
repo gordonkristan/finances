@@ -80,9 +80,9 @@ const PurchaseDetails = React.createClass({
 				<h4>Purchase Details</h4>
 				<form>
 					<div className='form-group'>
-						<label htmlFor='expense-add-cost'>Cost</label>
+						<label htmlFor='purchase-edit-cost'>Cost</label>
 						<input
-							id='expense-add-cost'
+							id='purchase-edit-cost'
 							className='form-control'
 							type='number'
 							pattern='[0-9]*'
@@ -92,9 +92,9 @@ const PurchaseDetails = React.createClass({
 						/>
 					</div>
 					<div className='form-group'>
-						<label htmlFor='expense-add-category'>Category</label>
+						<label htmlFor='purchase-edit-expense'>Expense</label>
 						<select
-							id='expense-add-category'
+							id='purchase-edit-expense'
 							className='form-control'
 							value={this.state.expenseId}
 							onChange={this.updateValue.bind(null, 'expenseId')}
@@ -109,18 +109,18 @@ const PurchaseDetails = React.createClass({
 						</select>
 					</div>
 					<div className='form-group'>
-						<label htmlFor='expense-add-description'>Description</label>
+						<label htmlFor='purchase-edit-description'>Description</label>
 						<input
-							id='expense-add-description'
+							id='purchase-edit-description'
 							className='form-control'
 							value={this.state.description}
 							onChange={this.updateValue.bind(null, 'description')}
 						/>
 					</div>
 					<div className='form-group'>
-						<label htmlFor='expense-add-date'>Date</label>
+						<label htmlFor='purchase-edit-date'>Date</label>
 						<input
-							id='expense-add-date'
+							id='purchase-edit-date'
 							className='form-control'
 							type='date'
 							value={this.state.date}

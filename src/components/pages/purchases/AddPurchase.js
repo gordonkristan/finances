@@ -9,7 +9,7 @@ const AddPurchase = React.createClass({
 		return {
 			expenses: [],
 			cost: '',
-			category: undefined,
+			expenseId: undefined,
 			description: '',
 			date: moment().format('YYYY-MM-DD')
 		};
@@ -36,7 +36,7 @@ const AddPurchase = React.createClass({
 
 		this.setState({
 			expenses,
-			category: (this.state.category || expenses[0].id)
+			expenseId: (this.state.expenseId || expenses[0].id)
 		});
 	},
 
@@ -47,7 +47,7 @@ const AddPurchase = React.createClass({
 	},
 
 	add() {
-		const stateProperties = ['cost', 'category', 'description', 'date'];
+		const stateProperties = ['cost', 'expenseId', 'description', 'date'];
 		const purchase = _.pick(this.state, stateProperties);
 
 		purchase.cost = parseInt(purchase.cost, 10);
@@ -78,12 +78,12 @@ const AddPurchase = React.createClass({
 						/>
 					</div>
 					<div className='form-group'>
-						<label htmlFor='expense-add-category'>Category</label>
+						<label htmlFor='expense-add-expense'>Expense</label>
 						<select
-							id='expense-add-category'
+							id='expense-add-expense'
 							className='form-control'
-						    value={this.state.category}
-						    onChange={this.updateValue.bind(null, 'category')}
+						    value={this.state.expenseId}
+						    onChange={this.updateValue.bind(null, 'expenseId')}
 						>
 							{this.state.expenses.map((expense) => {
 								return (
