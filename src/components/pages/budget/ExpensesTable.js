@@ -51,6 +51,20 @@ const ExpensesTable = React.createClass({
 		this.setState({ expenses });
 	},
 
+	getMonthlyCost(cost, frequency) {
+		switch (frequency) {
+			case 'yearly':
+			case 'annually':
+				return (cost / 12);
+			case 'biannually':
+				return (cost / 6);
+			case 'weekly':
+				return (cost * 4);
+			case 'monthly':
+				return cost;
+		}
+	},
+
 	////////////////////////////////////////
 
 	renderMobileTable() {
@@ -83,6 +97,7 @@ const ExpensesTable = React.createClass({
 		const headers = [
 			{ label: 'Name' },
 			{ label: 'Cost', justification: 'right' },
+			{ label: 'Monthly Cost', justification: 'right' },
 			{ label: 'Frequency', justification: 'right' },
 			{ label: 'AutoPay', justification: 'center' },
 			{ label: 'Fixed Cost', justification: 'center' },
@@ -94,6 +109,7 @@ const ExpensesTable = React.createClass({
 			return [
 				expense.name,
 				formatDollarAmount(expense.cost),
+				formatDollarAmount(this.getMonthlyCost(expense.cost, expense.frequency)),
 				formatBillingFrequency(expense.frequency),
 				(expense.autoPay ? CHECK_ICON : CROSS_ICON),
 				(expense.fixedCost ? CHECK_ICON : CROSS_ICON),
@@ -107,8 +123,11 @@ const ExpensesTable = React.createClass({
 		});
 
 		const footer = [
-			'Total Budgeted',
-			formatDollarAmount(_.sumBy(this.state.expenses, 'cost')),
+			'Total Budgeted Monthly',
+			null,
+			formatDollarAmount(this.state.expenses.reduce((total, expense) => {
+				return (total + this.getMonthlyCost(expense.cost, expense.frequency));
+			}, 0)),
 			null,
 			null,
 			null,

@@ -1,5 +1,11 @@
 const formatDollarAmount = (amount) => {
-	return `$${amount.toLocaleString()}`;
+	const formattedAmount = `$${amount.toLocaleString()}`;
+
+	if (formattedAmount.includes('.')) {
+		return formattedAmount.slice(0, formattedAmount.lastIndexOf('.') + 3);
+	} else {
+		return formattedAmount;
+	}
 };
 
 const formatBillingFrequency = (frequency) => {
