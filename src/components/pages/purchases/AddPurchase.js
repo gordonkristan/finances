@@ -41,11 +41,6 @@ const AddPurchase = React.createClass({
 	},
 
 	updateValue(name, event) {
-		let value = event.target.value;
-		if (name === 'cost') {
-			value = parseInt(value, 10);
-		}
-
 		this.setState({
 			[name]: event.target.value
 		});
@@ -54,6 +49,8 @@ const AddPurchase = React.createClass({
 	add() {
 		const stateProperties = ['cost', 'category', 'description', 'date'];
 		const purchase = _.pick(this.state, stateProperties);
+
+		purchase.cost = parseInt(purchase.cost, 10);
 
 		const userId = firebase.auth().currentUser.uid;
 		firebase.database().ref(`data/${userId}/transactions/purchases`).push(purchase, () => {
