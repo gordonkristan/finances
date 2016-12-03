@@ -1,13 +1,17 @@
 import _ from 'lodash';
 import React from 'react';
-import moment from 'moment';
 import Expense from 'app/models/expense';
 import Purchase from 'app/models/purchase';
 import Table from 'app/components/util/Table';
 
 import { Link } from 'react-router';
 import { isMobile } from 'app/util/mobile';
+import { createDataRef } from 'app/util/firebase';
 import { formatDollarAmount } from 'app/util/formatters';
+
+const pickArrayIndices = (array, indices) => {
+	return _.map(indices, (index) => array[index]);
+};
 
 const PurchasesTable = React.createClass({
 
@@ -15,44 +19,26 @@ const PurchasesTable = React.createClass({
 		router: React.PropTypes.object
 	},
 
+	propTypes: {
+		purchases: React.PropTypes.arrayOf(React.PropTypes.instanceOf(Purchase)).isRequired
+	},
+
 	getInitialState() {
 		return {
-			purchases: [],
 			expenses: {}
 		};
 	},
 
 	componentDidMount() {
-		const uid = firebase.auth().currentUser.uid;
-
-		this.purchasesRef = firebase.database().
-			ref(`data/${uid}/transactions/purchases`).
-			orderByChild('date').
-			startAt(moment().startOf('month').format('YYYY-MM-DD')).
-			endAt(moment().endOf('month').format('YYYY-MM-DD'));
-
-		this.purchasesRef.on('value', this.purchasesUpdated);
-
-		this.expensesRef = firebase.database().ref(`data/${uid}/budget/expenses`);
+		this.expensesRef = createDataRef('budget/expenses');
 		this.expensesRef.on('value', this.expensesUpdated);
 	},
 
 	componentWillUnmount() {
-		this.purchasesRef.off('value', this.purchasesUpdated);
 		this.expensesRef.off('value', this.expensesUpdated);
 	},
 
 	////////////////////////////////////////
-
-	purchasesUpdated(purchasesSnapshot) {
-		const purchases = [];
-
-		purchasesSnapshot.forEach((purchaseSnapshot) => {
-			purchases.push(new Purchase(purchaseSnapshot));
-		});
-
-		this.setState({ purchases });
-	},
 
 	expensesUpdated(expensesSnapshot) {
 		const expenses = {};
@@ -72,36 +58,9 @@ const PurchasesTable = React.createClass({
 
 	////////////////////////////////////////
 
-	renderMobileTable() {
-		const headers = [
-			{ label: 'Date' },
-			{ label: 'Expense' },
-			{ label: 'Cost', justification: 'right' }
-		];
+	render() {
+		const { purchases } = this.props;
 
-		const data = this.state.purchases.map((purchase) => {
-			return [
-				purchase.date.format('MMM D'),
-				this.getExpenseName(purchase.expenseId),
-				formatDollarAmount(purchase.cost)
-			];
-		});
-
-		const footer = [
-			null,
-			'Total',
-			formatDollarAmount(_.sumBy(this.state.purchases, 'cost'))
-		];
-
-		const onRowClicked = (row, index) => {
-			const purchase = this.state.purchases[index];
-			this.context.router.push(`/purchases/${purchase.id}/details`);
-		};
-
-		return { headers, data, footer, onRowClicked };
-	},
-
-	renderDesktopTable() {
 		const headers = [
 			{ label: 'Date' },
 			{ label: 'Expense' },
@@ -110,7 +69,7 @@ const PurchasesTable = React.createClass({
 			{ label: '', justification: 'center' }
 		];
 
-		const data = this.state.purchases.map((purchase) => {
+		const data = purchases.map((purchase) => {
 			return [
 				purchase.date.format('MMM D'),
 				this.getExpenseName(purchase.expenseId),
@@ -126,15 +85,26 @@ const PurchasesTable = React.createClass({
 			null,
 			null,
 			'Total',
-			formatDollarAmount(_.sumBy(this.state.purchases, 'cost')),
+			formatDollarAmount(_.sumBy(purchases, 'cost')),
 			null
 		];
 
-		return { headers, data, footer };
-	},
+		const props = { headers, data, footer };
 
-	render() {
-		const props = (isMobile ? this.renderMobileTable() : this.renderDesktopTable());
+		if (isMobile) {
+			const mobileIndices = [0, 1, 3];
+
+			props.headers = pickArrayIndices(props.headers, mobileIndices);
+			props.footer = pickArrayIndices(props.footer, mobileIndices);
+			props.data = props.data.map((row) => {
+				return pickArrayIndices(row, mobileIndices);
+			});
+
+			props.onRowClicked = (row, index) => {
+				const purchase = purchases[index];
+				this.context.router.push(`/purchases/${purchase.id}/details`);
+			};
+		}
 
 		return <Table {...props} />;
 	}

@@ -12,8 +12,8 @@ import SignIn from './components/pages/SignIn';
 import Budget from './components/pages/budget/Budget';
 import AddExpense from './components/pages/budget/AddExpense';
 import AddPurchase from './components/pages/purchases/AddPurchase';
+import PurchasesList from './components/pages/purchases/PurchasesList';
 import ExpenseDetails from './components/pages/budget/expenses/Details';
-import PurchasesTable from './components/pages/purchases/PurchasesTable';
 import PurchaseDetails from './components/pages/purchases/PurchaseDetails';
 
 const enterApp = (nextState, replace, callback) => {
@@ -50,7 +50,7 @@ const page = (
 				<Route path='/budget/expenses/:expenseId/details' component={ExpenseDetails} />
 			</Route>
 			<Route path='/purchases'>
-				<IndexRoute component={PurchasesTable} />
+				<IndexRoute component={PurchasesList} />
 				<Route path='/purchases/add-purchase' component={AddPurchase} />
 				<Route path='/purchases/:purchaseId/details' component={PurchaseDetails} />
 			</Route>
