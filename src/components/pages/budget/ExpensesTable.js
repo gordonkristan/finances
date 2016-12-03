@@ -73,7 +73,7 @@ const ExpensesTable = React.createClass({
 
 		const onRowClicked = (row, index) => {
 			const expense = this.state.expenses[index];
-			this.context.router.push(`/budget/expenses/${expense.id}/details`);
+			this.context.router.push(`/purchases/by-expense/${expense.id}`);
 		};
 
 		return { headers, data, footer, onRowClicked };
