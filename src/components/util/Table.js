@@ -6,7 +6,8 @@ const Table = React.createClass({
 			label: React.PropTypes.string.isRequired,
 			justification: React.PropTypes.oneOf(['left', 'center', 'right'])
 		})).isRequired,
-		data: React.PropTypes.arrayOf(React.PropTypes.arrayOf(React.PropTypes.node.isRequired)).isRequired,
+		data: React.PropTypes.arrayOf(React.PropTypes.arrayOf(React.PropTypes.node)).isRequired,
+		footer: React.PropTypes.arrayOf(React.PropTypes.node),
 		onRowClicked: React.PropTypes.func
 	},
 
@@ -47,6 +48,21 @@ const Table = React.createClass({
 						);
 					})}
 				</tbody>
+				{this.props.footer &&
+					<tfoot style={{fontWeight: 'bold'}}>
+						<tr>
+							{this.props.footer.map((cell, index) => {
+								const { justification = 'left' } = this.props.headers[index];
+
+								return (
+									<td style={{textAlign: justification}} key={index}>
+										{cell}
+									</td>
+								);
+							})}
+						</tr>
+					</tfoot>
+				}
 			</table>
 		);
 	}
