@@ -15,6 +15,7 @@ import AddPurchase from './components/pages/purchases/AddPurchase';
 import PurchasesList from './components/pages/purchases/PurchasesList';
 import ExpenseDetails from './components/pages/budget/expenses/Details';
 import PurchaseDetails from './components/pages/purchases/PurchaseDetails';
+import PurchasesByExpense from './components/pages/purchases/PurchasesByExpense';
 
 const enterApp = (nextState, replace, callback) => {
 	firebase.auth().onAuthStateChanged((user) => {
@@ -51,6 +52,7 @@ const page = (
 			</Route>
 			<Route path='/purchases'>
 				<IndexRoute component={PurchasesList} />
+				<Route path='/purchases/by-expense/:expenseId' component={PurchasesByExpense} />
 				<Route path='/purchases/add-purchase' component={AddPurchase} />
 				<Route path='/purchases/:purchaseId/details' component={PurchaseDetails} />
 			</Route>

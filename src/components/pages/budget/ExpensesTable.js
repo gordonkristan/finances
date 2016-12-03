@@ -10,6 +10,9 @@ import {
 	formatBillingFrequency
 } from 'app/util/formatters';
 
+const CHECK_ICON = <i className='fa fa-check' style={{color: 'green'}} />;
+const CROSS_ICON = <i className='fa fa-close' style={{color: 'red'}} />;
+
 const ExpensesTable = React.createClass({
 
 	contextTypes: {
@@ -48,12 +51,6 @@ const ExpensesTable = React.createClass({
 		this.setState({ expenses });
 	},
 
-	disableExpense(expense) {
-		if (window.confirm('Are you sure you want to remove this expense?')) {
-			expense.isDisabled = true;
-		}
-	},
-
 	////////////////////////////////////////
 
 	renderMobileTable() {
@@ -87,8 +84,8 @@ const ExpensesTable = React.createClass({
 			{ label: 'Name' },
 			{ label: 'Cost', justification: 'right' },
 			{ label: 'Frequency', justification: 'right' },
-			{ label: 'AutoPay', justification: 'right' },
-			{ label: 'Fixed Cost', justification: 'right' },
+			{ label: 'AutoPay', justification: 'center' },
+			{ label: 'Fixed Cost', justification: 'center' },
 			{ label: '', justification: 'center' },
 			{ label: '', justification: 'center' }
 		];
@@ -98,22 +95,21 @@ const ExpensesTable = React.createClass({
 				expense.name,
 				formatDollarAmount(expense.cost),
 				formatBillingFrequency(expense.frequency),
-				<input type='checkbox' className='form-check-input' checked={expense.autoPay} readOnly={true} />,
-				<input type='checkbox' className='form-check-input' checked={expense.fixedCost} readOnly={true} />,
-				<Link to={`/budget/expenses/${expense.id}/details`}>
-					<i className='fa fa-cog' />
+				(expense.autoPay ? CHECK_ICON : CROSS_ICON),
+				(expense.fixedCost ? CHECK_ICON : CROSS_ICON),
+				<Link to={`/purchases/by-expense/${expense.id}`} title='View Purchases'>
+					<i className='fa fa-bars' />
 				</Link>,
-				<i
-					className='fa fa-ban'
-					style={{cursor: 'pointer', color: 'red'}}
-					onClick={this.disableExpense.bind(null, expense)}
-				/>
+				<Link to={`/budget/expenses/${expense.id}/details`} title='Edit Expense'>
+					<i className='fa fa-cog' />
+				</Link>
 			];
 		});
 
 		const footer = [
 			'Total Budgeted',
 			formatDollarAmount(_.sumBy(this.state.expenses, 'cost')),
+			null,
 			null,
 			null,
 			null,
