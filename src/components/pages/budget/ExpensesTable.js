@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React from 'react';
 import Expense from 'app/models/expense';
 import Table from 'app/components/util/Table';
@@ -58,12 +59,17 @@ const ExpensesTable = React.createClass({
 			];
 		});
 
+		const footer = [
+			'Total Budgeted',
+			formatDollarAmount(_.sumBy(this.state.expenses, 'cost'))
+		];
+
 		const onRowClicked = (row, index) => {
 			const expense = this.state.expenses[index];
 			this.context.router.push(`/budget/expenses/${expense.id}/details`);
 		};
 
-		return { headers, data, onRowClicked };
+		return { headers, data, footer, onRowClicked };
 	},
 
 	renderDesktopTable() {
@@ -89,7 +95,16 @@ const ExpensesTable = React.createClass({
 			];
 		});
 
-		return { headers, data };
+		const footer = [
+			'Total Budgeted',
+			formatDollarAmount(_.sumBy(this.state.expenses, 'cost')),
+			null,
+			null,
+			null,
+			null
+		];
+
+		return { headers, data, footer };
 	},
 
 	render() {

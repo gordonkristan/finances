@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React from 'react';
 import moment from 'moment';
 import Expense from 'app/models/expense';
@@ -86,12 +87,18 @@ const PurchasesTable = React.createClass({
 			];
 		});
 
+		const footer = [
+			null,
+			'Total',
+			formatDollarAmount(_.sumBy(this.state.purchases, 'cost'))
+		];
+
 		const onRowClicked = (row, index) => {
 			const purchase = this.state.purchases[index];
 			this.context.router.push(`/purchases/${purchase.id}/details`);
 		};
 
-		return { headers, data, onRowClicked };
+		return { headers, data, footer, onRowClicked };
 	},
 
 	renderDesktopTable() {
@@ -115,7 +122,15 @@ const PurchasesTable = React.createClass({
 			];
 		});
 
-		return { headers, data };
+		const footer = [
+			null,
+			null,
+			'Total',
+			formatDollarAmount(_.sumBy(this.state.purchases, 'cost')),
+			null
+		];
+
+		return { headers, data, footer };
 	},
 
 	render() {
