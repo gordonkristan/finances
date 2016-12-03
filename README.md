@@ -17,10 +17,7 @@ open http://localhost:8080/#/budget/expenses
 npm i -g firebase-tools
 # authenticate
 firebase login
-# build the latest version of the app
-webpack
-# deploy
-firebase deploy
+# sh deploy.sh
 ```
 
 ### User Requirements
