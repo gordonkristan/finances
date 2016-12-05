@@ -32,7 +32,8 @@ const App = React.createClass({
 			frequency: this.state.frequency,
 			isDisabled: false,
 			autoPay: this.state.autoPay,
-			fixedCost: this.state.fixedCost
+			fixedCost: this.state.fixedCost,
+			priority: 0
 		};
 
 		const userId = firebase.auth().currentUser.uid;
