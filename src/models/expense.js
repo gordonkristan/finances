@@ -36,6 +36,27 @@ class Expense extends Model {
 	set isDisabled(disabled) {
 		this._updateValue('isDisabled', disabled);
 	}
+
+	_setSurroundingExpenses(higherPriorityExpense, lowerPriorityExpense) {
+		this._higherPriorityExpense = higherPriorityExpense;
+		this._lowerPriorityExpense = lowerPriorityExpense;
+	}
+
+	raisePriority() {
+		if (this._higherPriorityExpense) {
+			const priority = this._val.priority;
+			this._updateValue('priority', this._higherPriorityExpense._val.priority);
+			this._higherPriorityExpense._updateValue('priority', priority);
+		}
+	}
+
+	lowerPriority() {
+		if (this._lowerPriorityExpense) {
+			const priority = this._val.priority;
+			this._updateValue('priority', this._lowerPriorityExpense._val.priority);
+			this._lowerPriorityExpense._updateValue('priority', priority);
+		}
+	}
 }
 
 export default Expense;

@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { createExpense } from 'app/util/firebase';
+
 const App = React.createClass({
 
 	getInitialState() {
@@ -36,9 +38,10 @@ const App = React.createClass({
 			priority: 0
 		};
 
-		const userId = firebase.auth().currentUser.uid;
-		firebase.database().ref(`data/${userId}/budget/expenses`).push(expense, () => {
-			this.setState(this.getInitialState());
+		createExpense(expense, (success) => {
+			if (success) {
+				this.setState(this.getInitialState());
+			}
 		});
 	},
 

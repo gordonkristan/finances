@@ -5,6 +5,7 @@ import Table from 'app/components/util/Table';
 
 import { Link } from 'react-router';
 import { isMobile } from 'app/util/mobile';
+import { observeExpenses } from 'app/util/firebase';
 import {
 	formatDollarAmount,
 	formatBillingFrequency
@@ -26,30 +27,16 @@ const ExpensesTable = React.createClass({
 	},
 
 	componentDidMount() {
-		const uid = firebase.auth().currentUser.uid;
-		this.dataRef = firebase.database().ref(`data/${uid}/budget/expenses`);
-		this.dataRef.on('value', this.expensesUpdated);
+		this.cancelObserver = observeExpenses((expenses) => {
+			this.setState({ expenses });
+		});
 	},
 
 	componentWillUnmount() {
-		this.dataRef.off('value', this.expensesUpdated);
+		this.cancelObserver();
 	},
 
 	////////////////////////////////////////
-
-	expensesUpdated(expensesSnapshot) {
-		const expenses = [];
-
-		expensesSnapshot.forEach((expenseSnapshot) => {
-			const expense = new Expense(expenseSnapshot);
-
-			if (!expense.isDisabled) {
-				expenses.push(expense);
-			}
-		});
-
-		this.setState({ expenses });
-	},
 
 	getMonthlyCost(cost, frequency) {
 		switch (frequency) {
@@ -63,6 +50,14 @@ const ExpensesTable = React.createClass({
 			case 'monthly':
 				return cost;
 		}
+	},
+
+	moveExpenseUp(expense) {
+		expense.raisePriority();
+	},
+
+	moveExpenseDown(expense) {
+		expense.lowerPriority();
 	},
 
 	////////////////////////////////////////
@@ -102,10 +97,12 @@ const ExpensesTable = React.createClass({
 			{ label: 'AutoPay', justification: 'center' },
 			{ label: 'Fixed Cost', justification: 'center' },
 			{ label: '', justification: 'center' },
+			{ label: '', justification: 'center' },
+			{ label: '', justification: 'center' },
 			{ label: '', justification: 'center' }
 		];
 
-		const data = this.state.expenses.map((expense) => {
+		const data = this.state.expenses.map((expense, index, expenses) => {
 			return [
 				expense.name,
 				formatDollarAmount(expense.cost),
@@ -118,7 +115,21 @@ const ExpensesTable = React.createClass({
 				</Link>,
 				<Link to={`/budget/expenses/${expense.id}/details`} title='Edit Expense'>
 					<i className='fa fa-cog' />
-				</Link>
+				</Link>,
+				(index !== 0 &&
+					<i
+						className='fa fa-caret-up'
+						style={{cursor: 'pointer'}}
+						onClick={this.moveExpenseUp.bind(null, expense)}
+					/>
+				),
+				(index !== expenses.length - 1 &&
+					<i
+						className='fa fa-caret-down'
+						style={{cursor: 'pointer'}}
+						onClick={this.moveExpenseDown.bind(null, expense)}
+					/>
+				)
 			];
 		});
 
@@ -128,6 +139,8 @@ const ExpensesTable = React.createClass({
 			formatDollarAmount(this.state.expenses.reduce((total, expense) => {
 				return (total + this.getMonthlyCost(expense.cost, expense.frequency));
 			}, 0)),
+			null,
+			null,
 			null,
 			null,
 			null,
