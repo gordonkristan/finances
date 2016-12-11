@@ -54,7 +54,10 @@ const AddPurchase = React.createClass({
 
 		const userId = firebase.auth().currentUser.uid;
 		firebase.database().ref(`data/${userId}/transactions/purchases`).push(purchase, () => {
-			this.setState(_.pick(this.getInitialState(), stateProperties));
+			this.setState({
+				cost: '',
+				description: ''
+			});
 		});
 	},
 
