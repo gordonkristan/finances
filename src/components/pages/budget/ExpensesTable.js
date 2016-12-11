@@ -71,13 +71,15 @@ const ExpensesTable = React.createClass({
 		const data = this.state.expenses.map((expense) => {
 			return [
 				expense.name,
-				formatDollarAmount(expense.cost)
+				formatDollarAmount(this.getMonthlyCost(expense.cost, expense.frequency))
 			];
 		});
 
 		const footer = [
 			'Total Budgeted',
-			formatDollarAmount(_.sumBy(this.state.expenses, 'cost'))
+			formatDollarAmount(this.state.expenses.reduce((total, expense) => {
+				return (total + this.getMonthlyCost(expense.cost, expense.frequency));
+			}, 0)),
 		];
 
 		const onRowClicked = (row, index) => {
