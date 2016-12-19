@@ -36,22 +36,6 @@ const ExpensesTable = React.createClass({
 
 	////////////////////////////////////////
 
-	getMonthlyCost(cost, frequency) {
-		switch (frequency) {
-			case 'yearly':
-			case 'annually':
-				return (cost / 12);
-			case 'biannually':
-				return (cost / 6);
-			case 'weekly':
-				return (cost * 4);
-			case 'monthly':
-				return cost;
-			case 'bimonthly':
-				return (cost / 2);
-		}
-	},
-
 	moveExpenseUp(expense) {
 		expense.raisePriority();
 	},
@@ -71,14 +55,14 @@ const ExpensesTable = React.createClass({
 		const data = this.state.expenses.map((expense) => {
 			return [
 				expense.name,
-				formatDollarAmount(this.getMonthlyCost(expense.cost, expense.frequency))
+				formatDollarAmount(expense.monthlyCost)
 			];
 		});
 
 		const footer = [
 			'Total Budgeted',
 			formatDollarAmount(this.state.expenses.reduce((total, expense) => {
-				return (total + this.getMonthlyCost(expense.cost, expense.frequency));
+				return (total + expense.monthlyCost);
 			}, 0)),
 		];
 
@@ -108,7 +92,7 @@ const ExpensesTable = React.createClass({
 			return [
 				expense.name,
 				formatDollarAmount(expense.cost),
-				formatDollarAmount(this.getMonthlyCost(expense.cost, expense.frequency)),
+				formatDollarAmount(expense.monthlyCost),
 				formatBillingFrequency(expense.frequency),
 				(expense.autoPay ? CHECK_ICON : CROSS_ICON),
 				(expense.fixedCost ? CHECK_ICON : CROSS_ICON),
@@ -135,11 +119,11 @@ const ExpensesTable = React.createClass({
 			];
 		});
 
-		const footer = [
+		const footers = [[
 			'Total Budgeted Monthly',
 			null,
 			formatDollarAmount(this.state.expenses.reduce((total, expense) => {
-				return (total + this.getMonthlyCost(expense.cost, expense.frequency));
+				return (total + expense.monthlyCost);
 			}, 0)),
 			null,
 			null,
@@ -148,9 +132,9 @@ const ExpensesTable = React.createClass({
 			null,
 			null,
 			null
-		];
+		]];
 
-		return { headers, data, footer };
+		return { headers, data, footers };
 	},
 
 	render() {

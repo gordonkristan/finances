@@ -2,8 +2,11 @@ import React from 'react';
 import PurchasesTable from 'app/components/patterns/PurchasesTable';
 
 import { isMobile } from 'app/util/mobile';
-import { observePurchases } from 'app/util/firebase';
 import { formatDollarAmount } from 'app/util/formatters';
+import {
+	observePurchases,
+	observeExpenses
+} from 'app/util/firebase';
 
 const PurchasesList = React.createClass({
 
@@ -13,7 +16,8 @@ const PurchasesList = React.createClass({
 
 	getInitialState() {
 		return {
-			purchases: []
+			purchases: null,
+			expenses: null
 		};
 	},
 
@@ -21,14 +25,28 @@ const PurchasesList = React.createClass({
 		this.stopObservingPurchases = observePurchases(null, (purchases) => {
 			this.setState({ purchases });
 		});
+
+		this.stopObservingExpenses = observeExpenses((expenses) => {
+			this.setState({ expenses });
+		});
 	},
 
 	componentWillUnmount() {
-		this.stopObservingPurchases()
+		this.stopObservingPurchases();
+		this.stopObservingExpenses();
 	},
 
 	render() {
-		return <PurchasesTable purchases={this.state.purchases} />;
+		const { purchases, expenses } = this.state;
+		if (!purchases || !expenses) {
+			return null;
+		}
+
+		const totalBudgeted = expenses.reduce((total, expense) => {
+			return (total + expense.monthlyCost);
+		}, 0);
+
+		return <PurchasesTable purchases={purchases} totalBudgeted={totalBudgeted} />;
 	}
 
 });

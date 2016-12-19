@@ -9,6 +9,22 @@ class Expense extends Model {
 		return this._val.cost;
 	}
 
+	get monthlyCost() {
+		switch (this.frequency) {
+			case 'weekly':
+				return (this.cost * 4);
+			case 'bimonthly':
+				return (this.cost / 2);
+			case 'semiannually':
+				return (this.cost / 6);
+			case 'annually':
+				return (this.cost / 12);
+			case 'monthly':
+			default:
+				return this.cost;
+		}
+	}
+
 	get frequency() {
 		return this._val.frequency;
 	}

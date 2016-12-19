@@ -74,6 +74,20 @@ const observeExpenses = (callback) => {
 	};
 };
 
+const observeExpense = (expenseId, callback) => {
+	const dataRef = createDataRef(`budget/expenses/${expenseId}`);
+
+	const valueCallback = (expenseSnapshot) => {
+		callback(new Expense(expenseSnapshot));
+	};
+
+	dataRef.on('value', valueCallback);
+
+	return () => {
+		dataRef.off('value', valueCallback);
+	};
+};
+
 const createExpense = (data, callback) => {
 	const expensesCallback = (expenses) => {
 		cancelObserver();
@@ -94,5 +108,6 @@ export {
 	observePurchases,
 	observePurchase,
 	observeExpenses,
+	observeExpense,
 	createExpense
 };

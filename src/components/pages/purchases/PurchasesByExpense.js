@@ -2,8 +2,11 @@ import React from 'react';
 import PurchasesTable from 'app/components/patterns/PurchasesTable';
 
 import { isMobile } from 'app/util/mobile';
-import { observePurchases } from 'app/util/firebase';
 import { formatDollarAmount } from 'app/util/formatters';
+import {
+	observePurchases,
+	observeExpense
+} from 'app/util/firebase';
 
 const PurchasesByExpense = React.createClass({
 
@@ -17,23 +20,38 @@ const PurchasesByExpense = React.createClass({
 
 	getInitialState() {
 		return {
-			purchases: []
+			purchases: null,
+			expense: null
 		};
 	},
 
 	componentDidMount() {
-		this.observePurchases(this.props.params.expenseId);
+		const { expenseId } = this.props.params;
+
+		this.observePurchases(expenseId);
+		this.observeExpense(expenseId);
 	},
 
 	componentWillReceiveProps(nextProps) {
-		if (this.props.params.expenseId !== nextProps.params.expenseId) {
+		const expenseId = nextProps.params.expenseId;
+
+		if (this.props.params.expenseId !== expenseId) {
 			this.stopObservingPurchases();
-			this.observePurchases(nextProps.params.expenseId);
+			this.stopObservingExpense();
+
+			this.setState({
+				purchases: null,
+				expense: null
+			});
+
+			this.observePurchases(expenseId);
+			this.observeExpense(expenseId);
 		}
 	},
 
 	componentWillUnmount() {
 		this.stopObservingPurchases();
+		this.stopObservingExpense();
 	},
 
 	////////////////////////////////////////
@@ -44,10 +62,21 @@ const PurchasesByExpense = React.createClass({
 		});
 	},
 
+	observeExpense(expenseId) {
+		this.stopObservingExpense = observeExpense(expenseId, (expense) => {
+			this.setState({ expense });
+		});
+	},
+
 	////////////////////////////////////////
 
 	render() {
-		return <PurchasesTable purchases={this.state.purchases} />;
+		const { purchases, expense } = this.state;
+		if (!purchases || !expense) {
+			return null;
+		}
+
+		return <PurchasesTable purchases={purchases} totalBudgeted={expense.cost} />;
 	}
 
 });

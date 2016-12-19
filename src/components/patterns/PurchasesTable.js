@@ -20,7 +20,8 @@ const PurchasesTable = React.createClass({
 	},
 
 	propTypes: {
-		purchases: React.PropTypes.arrayOf(React.PropTypes.instanceOf(Purchase)).isRequired
+		purchases: React.PropTypes.arrayOf(React.PropTypes.instanceOf(Purchase)).isRequired,
+		totalBudgeted: React.PropTypes.number.isRequired
 	},
 
 	getInitialState() {
@@ -59,7 +60,7 @@ const PurchasesTable = React.createClass({
 	////////////////////////////////////////
 
 	render() {
-		const { purchases } = this.props;
+		const { purchases, totalBudgeted } = this.props;
 
 		const headers = [
 			{ label: 'Date' },
@@ -83,15 +84,35 @@ const PurchasesTable = React.createClass({
 			];
 		});
 
-		const footer = [
-			null,
-			null,
-			'Total',
-			formatDollarAmount(_.sumBy(purchases, 'cost')),
-			null
-		];
+		const totalSpent = _.sumBy(purchases, 'cost');
+		const diff = (totalBudgeted - totalSpent);
+		const diffColor = (diff === 0 ? 'black' : (diff > 0 ? 'green' : 'red'));
 
-		const props = { headers, data, footer };
+		const footers = [[
+			null,
+			null,
+			'Total Spent',
+			formatDollarAmount(totalSpent),
+			null
+		], [
+			null,
+			null,
+			'Amount Budgeted',
+			formatDollarAmount(totalBudgeted),
+			null
+		], [
+			null,
+			null,
+			<span style={{color: diffColor}}>
+					{diff >= 0 ? 'Amount Left' : 'Amount Overspent'}
+				</span>,
+			<span style={{color: diffColor}}>
+					{formatDollarAmount(diff).replace('$-', '-$')}
+				</span>,
+			null
+		]];
+
+		const props = { headers, data, footers };
 
 		if (isMobile) {
 			const mobileIndices = [0, 1, 3];
