@@ -49,6 +49,8 @@ const ExpensesTable = React.createClass({
 				return (cost * 4);
 			case 'monthly':
 				return cost;
+			case 'bimonthly':
+				return (cost / 2);
 		}
 	},
 

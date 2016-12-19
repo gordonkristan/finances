@@ -85,6 +85,7 @@ const App = React.createClass({
 							<option value='daily'>Daily</option>
 							<option value='weekly'>Weekly</option>
 							<option value='monthly'>Monthly</option>
+							<option value='bimonthly'>Bi-Monthly</option>
 							<option value='biannually'>Biannually</option>
 							<option value='annually'>Annually</option>
 						</select>
