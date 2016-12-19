@@ -41,9 +41,23 @@ const AddPurchase = React.createClass({
 	},
 
 	updateValue(name, event) {
-		this.setState({
-			[name]: event.target.value
-		});
+		const value = event.target.value;
+
+		if (name === 'expenseId') {
+			const expense = this.state.expenses.find(({ id }) => {
+				return (id === value);
+			});
+
+			// If it's a fixed cost, pre-populate it
+			if (expense.fixedCost) {
+				this.setState({
+					expenseId: value,
+					cost: expense.cost
+				});
+			}
+		}
+
+		this.setState({ [name]: value });
 	},
 
 	add() {
