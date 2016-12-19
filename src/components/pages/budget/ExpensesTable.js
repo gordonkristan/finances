@@ -59,19 +59,19 @@ const ExpensesTable = React.createClass({
 			];
 		});
 
-		const footer = [
+		const footers = [[
 			'Total Budgeted',
 			formatDollarAmount(this.state.expenses.reduce((total, expense) => {
 				return (total + expense.monthlyCost);
 			}, 0)),
-		];
+		]];
 
 		const onRowClicked = (row, index) => {
 			const expense = this.state.expenses[index];
 			this.context.router.push(`/purchases/by-expense/${expense.id}`);
 		};
 
-		return { headers, data, footer, onRowClicked };
+		return { headers, data, footers, onRowClicked };
 	},
 
 	renderDesktopTable() {

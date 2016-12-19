@@ -118,7 +118,10 @@ const PurchasesTable = React.createClass({
 			const mobileIndices = [0, 1, 3];
 
 			props.headers = pickArrayIndices(props.headers, mobileIndices);
-			props.footer = pickArrayIndices(props.footer, mobileIndices);
+			props.footers = props.footers.map((row) => {
+				return pickArrayIndices(row, mobileIndices);
+			});
+
 			props.data = props.data.map((row) => {
 				return pickArrayIndices(row, mobileIndices);
 			});
