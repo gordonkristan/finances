@@ -1,6 +1,4 @@
-import _ from 'lodash';
 import React from 'react';
-import Expense from 'app/models/expense';
 import Table from 'app/components/util/Table';
 
 import { Link } from 'react-router';
