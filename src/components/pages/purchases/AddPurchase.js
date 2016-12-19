@@ -1,7 +1,8 @@
 import _ from 'lodash';
 import React from 'react';
 import moment from 'moment';
-import Expense from 'app/models/expense';
+
+import { observeExpenses } from 'app/util/firebase';
 
 const AddPurchase = React.createClass({
 
@@ -16,29 +17,19 @@ const AddPurchase = React.createClass({
 	},
 
 	componentDidMount() {
-		const uid = firebase.auth().currentUser.uid;
-		this.dataRef = firebase.database().ref(`data/${uid}/budget/expenses`);
-		this.dataRef.on('value', this.expensesUpdated);
+		this.stopObservingExpenses = observeExpenses((expenses) => {
+			this.setState({
+				expenses,
+				expenseId: (this.state.expenseId || expenses[0].id)
+			});
+		});
 	},
 
 	componentWillUnmount() {
-		this.dataRef.off('value', this.expensesUpdated);
+		this.stopObservingExpenses();
 	},
 
 	////////////////////////////////////////
-
-	expensesUpdated(expensesSnapshot) {
-		const expenses = [];
-
-		expensesSnapshot.forEach((expenseSnapshot) => {
-			expenses.push(new Expense(expenseSnapshot));
-		});
-
-		this.setState({
-			expenses,
-			expenseId: (this.state.expenseId || expenses[0].id)
-		});
-	},
 
 	updateValue(name, event) {
 		const value = event.target.value;
