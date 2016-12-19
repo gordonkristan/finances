@@ -33,6 +33,20 @@ const observePurchases = (query, callback) => {
 	};
 };
 
+const observePurchase = (purchaseId, callback) => {
+	const dataRef = createDataRef(`transactions/purchases/${purchaseId}`);
+
+	const valueCallback = (purchaseSnapshot) => {
+		callback(new Purchase(purchaseSnapshot));
+	};
+
+	dataRef.on('value', valueCallback);
+
+	return () => {
+		dataRef.off('value', valueCallback);
+	};
+};
+
 const observeExpenses = (callback) => {
 	const dataRef = createDataRef('budget/expenses').
 		orderByChild('priority');
@@ -78,6 +92,7 @@ const createExpense = (data, callback) => {
 export {
 	createDataRef,
 	observePurchases,
+	observePurchase,
 	observeExpenses,
 	createExpense
 };

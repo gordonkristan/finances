@@ -1,6 +1,9 @@
 import React from 'react';
-import Expense from 'app/models/expense';
-import Purchase from 'app/models/purchase';
+
+import {
+	observePurchase,
+	observeExpenses
+} from 'app/util/firebase';
 
 const PurchaseDetails = React.createClass({
 	propTypes: {
@@ -19,25 +22,22 @@ const PurchaseDetails = React.createClass({
 	},
 
 	componentDidMount() {
-		const uid = firebase.auth().currentUser.uid;
 		const { purchaseId } = this.props.params;
 
-		this.purchaseRef = firebase.database().ref(`data/${uid}/transactions/purchases/${purchaseId}`);
-		this.purchaseRef.on('value', this.purchaseUpdated);
-
-		this.expensesRef = firebase.database().ref(`data/${uid}/budget/expenses`);
-		this.expensesRef.on('value', this.expensesUpdated);
+		this.stopObservingPurchase = observePurchase(purchaseId, this.purchaseUpdated);
+		this.stopObservingExpenses = observeExpenses((expenses) => {
+			this.setState({ expenses });
+		});
 	},
 
 	componentWillUnmount() {
-		this.purchaseRef.off('value', this.purchaseUpdated);
+		this.stopObservingPurchase();
+		this.stopObservingExpenses();
 	},
 
 	////////////////////////////////////////
 
-	purchaseUpdated(purchaseSnapshot) {
-		const purchase = new Purchase(purchaseSnapshot);
-
+	purchaseUpdated(purchase) {
 		this.setState({
 			purchase,
 			cost: purchase.cost.toString(),
@@ -45,16 +45,6 @@ const PurchaseDetails = React.createClass({
 			description: purchase.description,
 			date: purchase.date.format('YYYY-MM-DD')
 		});
-	},
-
-	expensesUpdated(expensesSnapshot) {
-		const expenses = [];
-
-		expensesSnapshot.forEach((expenseSnapshot) => {
-			expenses.push(new Expense(expenseSnapshot));
-		});
-
-		this.setState({ expenses });
 	},
 
 	updateValue(key, event) {
