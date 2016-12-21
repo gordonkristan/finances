@@ -1,4 +1,5 @@
 import React from 'react';
+import Icon from 'app/components/util/Icon';
 import Table from 'app/components/util/Table';
 
 import { Link } from 'react-router';
@@ -9,8 +10,8 @@ import {
 	formatBillingFrequency
 } from 'app/util/formatters';
 
-const CHECK_ICON = <i className='fa fa-check' style={{color: 'green'}} />;
-const CROSS_ICON = <i className='fa fa-close' style={{color: 'red'}} />;
+const CHECK_ICON = <Icon name='check' style={{color: 'green'}} />;
+const CROSS_ICON = <Icon name='close' style={{color: 'red'}} />;
 
 const ExpensesTable = React.createClass({
 
@@ -97,10 +98,10 @@ const ExpensesTable = React.createClass({
 				(expense.autoPay ? CHECK_ICON : CROSS_ICON),
 				(expense.fixedCost ? CHECK_ICON : CROSS_ICON),
 				<Link to={`/purchases/by-expense/${expense.id}`} title='View Purchases'>
-					<i className='fa fa-bars' />
+					<Icon name='bars' />
 				</Link>,
 				<Link to={`/budget/expenses/${expense.id}/details`} title='Edit Expense'>
-					<i className='fa fa-cog' />
+					<Icon name='cog' />
 				</Link>,
 				(index !== 0 &&
 					<i

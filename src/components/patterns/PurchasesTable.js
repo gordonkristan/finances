@@ -2,6 +2,7 @@ import _ from 'lodash';
 import React from 'react';
 import Expense from 'app/models/expense';
 import Purchase from 'app/models/purchase';
+import Icon from 'app/components/util/Icon';
 import Table from 'app/components/util/Table';
 
 import { Link } from 'react-router';
@@ -79,7 +80,7 @@ const PurchasesTable = React.createClass({
 				purchase.description,
 				formatDollarAmount(purchase.cost),
 				<Link to={`/purchases/${purchase.id}/details`}>
-					<i className='fa fa-cog' />
+					<Icon name='cog' />
 				</Link>
 			];
 		});
@@ -104,11 +105,11 @@ const PurchasesTable = React.createClass({
 			null,
 			null,
 			<span style={{color: diffColor}}>
-					{diff >= 0 ? 'Amount Left' : 'Amount Overspent'}
-				</span>,
+				{diff >= 0 ? 'Amount Left' : 'Amount Overspent'}
+			</span>,
 			<span style={{color: diffColor}}>
-					{formatDollarAmount(diff).replace('$-', '-$')}
-				</span>,
+				{formatDollarAmount(diff).replace('$-', '-$')}
+			</span>,
 			null
 		]];
 
