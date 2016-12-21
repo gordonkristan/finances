@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import React from 'react';
 import moment from 'moment';
+import Form from 'app/components/util/Form';
 
 import { observeExpenses } from 'app/util/firebase';
 
@@ -8,11 +9,11 @@ const AddPurchase = React.createClass({
 
 	getInitialState() {
 		return {
-			expenses: [],
-			cost: '',
+			expenses: null,
+			cost: 0,
 			expenseId: undefined,
 			description: '',
-			date: moment().format('YYYY-MM-DD')
+			date: moment()
 		};
 	},
 
@@ -31,9 +32,7 @@ const AddPurchase = React.createClass({
 
 	////////////////////////////////////////
 
-	updateValue(name, event) {
-		const value = event.target.value;
-
+	onValueUpdated(name, value) {
 		if (name === 'expenseId') {
 			const expense = this.state.expenses.find(({ id }) => {
 				return (id === value);
@@ -55,12 +54,12 @@ const AddPurchase = React.createClass({
 		const stateProperties = ['cost', 'expenseId', 'description', 'date'];
 		const purchase = _.pick(this.state, stateProperties);
 
-		purchase.cost = parseInt(purchase.cost, 10);
+		purchase.date = purchase.date.format('YYYY-MM-DD');
 
 		const userId = firebase.auth().currentUser.uid;
 		firebase.database().ref(`data/${userId}/transactions/purchases`).push(purchase, () => {
 			this.setState({
-				cost: '',
+				cost: 0,
 				description: ''
 			});
 		});
@@ -69,60 +68,51 @@ const AddPurchase = React.createClass({
 	////////////////////////////////////////
 
 	render() {
+		const { expenses, cost, expenseId, description, date } = this.state;
+
+		if (!expenses) {
+			return null;
+		}
+
+		const fields = [
+			{
+				type: 'number',
+				name: 'cost',
+				title: 'Cost',
+				value: cost
+			},
+			{
+				type: 'select',
+				name: 'expenseId',
+				title: 'Expense',
+				options: expenses.map(({ id, name }) => {
+					return { title: name, value: id };
+				}),
+				value: expenseId
+			},
+			{
+				type: 'string',
+				name: 'description',
+				title: 'Description',
+				value: description
+			},
+			{
+				type: 'date',
+				name: 'date',
+				title: 'Purchase Date',
+				value: date
+			}
+		];
+
 		return (
 			<div className='col-xs-12 col-md-8 offset-md-2'>
-				<h4>Add Purchase</h4>
-				<form>
-					<div className='form-group'>
-						<label htmlFor='expense-add-cost'>Cost</label>
-						<input
-							id='expense-add-cost'
-							className='form-control'
-							type='number'
-							pattern='[0-9]*'
-							inputMode='numeric'
-						    value={this.state.cost}
-						    onChange={this.updateValue.bind(null, 'cost')}
-						/>
-					</div>
-					<div className='form-group'>
-						<label htmlFor='expense-add-expense'>Expense</label>
-						<select
-							id='expense-add-expense'
-							className='form-control'
-						    value={this.state.expenseId}
-						    onChange={this.updateValue.bind(null, 'expenseId')}
-						>
-							{this.state.expenses.map((expense) => {
-								return (
-									<option value={expense.id} key={expense.id}>
-										{expense.name}
-									</option>
-								);
-							})}
-						</select>
-					</div>
-					<div className='form-group'>
-						<label htmlFor='expense-add-description'>Description</label>
-						<input
-							id='expense-add-description'
-							className='form-control'
-						    value={this.state.description}
-						    onChange={this.updateValue.bind(null, 'description')}
-						/>
-					</div>
-					<div className='form-group'>
-						<label htmlFor='expense-add-date'>Date</label>
-						<input
-							id='expense-add-date'
-							className='form-control'
-							type='date'
-						    value={this.state.date}
-						    onChange={this.updateValue.bind(null, 'date')}
-						/>
-					</div>
-					<button className='btn btn-success' onClick={this.add}>Add</button>
-				</form>
+				<Form
+					title='Purchase Details'
+					fields={fields}
+					submitText='Save'
+					onValueUpdated={this.onValueUpdated}
+					onSubmit={this.add}
+				/>
 			</div>
 		);
 	}
