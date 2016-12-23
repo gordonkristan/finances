@@ -1,4 +1,5 @@
 import React from 'react';
+import Form from 'app/components/util/Form';
 
 import { createExpense } from 'app/util/firebase';
 
@@ -16,15 +17,8 @@ const App = React.createClass({
 
 	////////////////////////////////////////
 
-	onValueChange(name, event) {
-		let value = event.target.value;
-		if (name === 'autoPay' || name === 'fixedCost') {
-			value = event.target.checked;
-		}
-
-		this.setState({
-			[name]: value
-		});
+	onValueUpdated(name, value) {
+		this.setState({ [name]: value });
 	},
 
 	add() {
@@ -48,76 +42,58 @@ const App = React.createClass({
 	////////////////////////////////////////
 
 	render() {
+		const { name, cost, frequency, autoPay, fixedCost } = this.state;
+
+		const fields = [
+			{
+				type: 'string',
+				name: 'name',
+				title: 'Name',
+				value: name
+			},
+			{
+				type: 'number',
+				name: 'cost',
+				title: 'Cost',
+				value: cost
+			},
+			{
+				type: 'select',
+				name: 'expenseId',
+				title: 'Expense',
+				options: [
+					{ title: 'Daily', value: 'daily' },
+					{ title: 'Weekly', value: 'weekly' },
+					{ title: 'Monthly', value: 'monthly' },
+					{ title: 'Bi-Monthly', value: 'bimonthly' },
+					{ title: 'Biannually', value: 'biannually' },
+					{ title: 'Annually', value: 'annually' }
+				],
+				value: frequency
+			},
+			{
+				type: 'checkbox',
+				name: 'autoPay',
+				title: 'Auto Pay?',
+				value: autoPay
+			},
+			{
+				type: 'checkbox',
+				name: 'fixedCost',
+				title: 'Fixed Cost?',
+				value: fixedCost
+			}
+		];
+
 		return (
 			<div className='col-xs-12 col-md-8 offset-md-2'>
-				<h4>Add Expense</h4>
-				<form>
-					<div className='form-group'>
-						<label htmlFor='add-expense-name'>Name</label>
-						<input
-							id='add-expense-name'
-							className='form-control'
-							value={this.state.name}
-							onChange={this.onValueChange.bind(null, 'name')}
-						/>
-					</div>
-					<div className='form-group'>
-						<label htmlFor='add-expense-cost'>Cost</label>
-						<input
-							id='add-expense-cost'
-							className='form-control'
-							type='number'
-							pattern='[0-9]*'
-							inputMode='numeric'
-							placeholder='Whole dollar amounts only'
-						    value={this.state.cost}
-						    onChange={this.onValueChange.bind(null, 'cost')}
-						/>
-					</div>
-					<div className='form-group'>
-						<label htmlFor='add-expense-frequency'>Frequency</label>
-						<select
-							id='add-expense-frequency'
-							className='form-control'
-						    value={this.state.frequency}
-						    onChange={this.onValueChange.bind(null, 'frequency')}
-						>
-							<option value='daily'>Daily</option>
-							<option value='weekly'>Weekly</option>
-							<option value='monthly'>Monthly</option>
-							<option value='bimonthly'>Bi-Monthly</option>
-							<option value='biannually'>Biannually</option>
-							<option value='annually'>Annually</option>
-						</select>
-					</div>
-					<div className='form-check'>
-						<label className='form-check-label' htmlFor='add-expense-auto-pay'>
-							<input
-								id='add-expense-auto-pay'
-								type='checkbox'
-								className='form-check-input'
-								checked={this.state.autoPay}
-								onChange={this.onValueChange.bind(null, 'autoPay')}
-							/>
-							&nbsp;AutoPay?
-						</label>
-					</div>
-					<div className='form-check'>
-						<label className='form-check-label' htmlFor='add-expense-fixed-cost'>
-							<input
-								id='add-expense-fixed-cost'
-								type='checkbox'
-								className='form-check-input'
-								checked={this.state.fixedCost}
-								onChange={this.onValueChange.bind(null, 'fixedCost')}
-							/>
-							&nbsp;Fixed Cost?
-						</label>
-					</div>
-					<button className='btn btn-success' onClick={this.add}>
-						Add
-					</button>
-				</form>
+				<Form
+					title='Add Expense'
+					fields={fields}
+					submitText='Add'
+					onValueUpdated={this.onValueUpdated}
+					onSubmit={this.add}
+				/>
 			</div>
 		);
 	}

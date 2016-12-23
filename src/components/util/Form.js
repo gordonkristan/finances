@@ -93,7 +93,7 @@ const Form = React.createClass({
 		return (
 			<input
 				id={`dynamic-form-${name}`}
-				className='form-control'
+				className='form-check-input'
 			    type='checkbox'
 			    checked={checked}
 			    onChange={(event) => {
@@ -107,11 +107,11 @@ const Form = React.createClass({
 
 	render() {
 		const { title, fields, submitText, onSubmit } = this.props;
-
 		return (
 			<div>
 				<h4>{title}</h4>
 				{fields.map(({ type, name, title, options, value }) => {
+					const isCheckbox = (type === 'checkbox');
 					let input;
 
 					switch(type) {
@@ -133,12 +133,13 @@ const Form = React.createClass({
 					}
 
 					return (
-						<div className='form-group' key={name}>
-							<label htmlFor={`dynamic-form-${name}`}>
+						<div className={isCheckbox ? 'form-check' : 'form-group'} key={name}>
+							<label htmlFor={`dynamic-form-${name}`} className={isCheckbox ? 'form-check-label' : ''}>
+								{isCheckbox ? input : null}
+								{isCheckbox ? '\u00A0' : null}
 								{title}
-								{type === 'checkbox' ? input : null}
 							</label>
-							{type === 'checkbox' ? null : input}
+							{isCheckbox ? null : input}
 						</div>
 					);
 				})}
