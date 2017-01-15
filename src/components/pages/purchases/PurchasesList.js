@@ -14,6 +14,10 @@ const PurchasesList = React.createClass({
 		router: React.PropTypes.object
 	},
 
+	propsTypes: {
+		params: React.PropTypes.object.isRequired
+	},
+
 	getInitialState() {
 		return {
 			purchases: null,
@@ -22,19 +26,41 @@ const PurchasesList = React.createClass({
 	},
 
 	componentDidMount() {
-		this.stopObservingPurchases = observePurchases(null, (purchases) => {
-			this.setState({ purchases });
-		});
+		this.observePurchases(this.props.params.month);
 
 		this.stopObservingExpenses = observeExpenses((expenses) => {
 			this.setState({ expenses });
 		});
 	},
 
+	componentWillReceiveProps(nextProps) {
+		const { month } = nextProps.params;
+
+		if (this.props.params.month !== month) {
+			this.stopObservingPurchases();
+			this.setState({ purchases: null });
+			this.observePurchases(month);
+		}
+	},
+
 	componentWillUnmount() {
 		this.stopObservingPurchases();
 		this.stopObservingExpenses();
 	},
+
+	////////////////////////////////////////
+
+	observePurchases(month) {
+		this.stopObservingPurchases = observePurchases({ month }, (purchases) => {
+			this.setState({ purchases });
+		});
+	},
+
+	onMonthChanged(month) {
+		this.context.router.push(`/purchases/${month}`);
+	},
+
+	////////////////////////////////////////
 
 	render() {
 		const { purchases, expenses } = this.state;
@@ -46,7 +72,14 @@ const PurchasesList = React.createClass({
 			return (total + expense.monthlyCost);
 		}, 0);
 
-		return <PurchasesTable purchases={purchases} totalBudgeted={totalBudgeted} />;
+		return (
+			<PurchasesTable
+				purchases={purchases}
+				totalBudgeted={totalBudgeted}
+				month={this.props.params.month}
+			    onMonthChanged={this.onMonthChanged}
+			/>
+		);
 	}
 
 });

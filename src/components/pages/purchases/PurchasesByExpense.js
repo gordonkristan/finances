@@ -26,16 +26,16 @@ const PurchasesByExpense = React.createClass({
 	},
 
 	componentDidMount() {
-		const { expenseId } = this.props.params;
+		const { expenseId, month } = this.props.params;
 
-		this.observePurchases(expenseId);
+		this.observePurchases(expenseId, month);
 		this.observeExpense(expenseId);
 	},
 
 	componentWillReceiveProps(nextProps) {
-		const expenseId = nextProps.params.expenseId;
+		const { expenseId, month } = nextProps.params;
 
-		if (this.props.params.expenseId !== expenseId) {
+		if (this.props.params.expenseId !== expenseId || this.props.params.month !== month) {
 			this.stopObservingPurchases();
 			this.stopObservingExpense();
 
@@ -44,7 +44,7 @@ const PurchasesByExpense = React.createClass({
 				expense: null
 			});
 
-			this.observePurchases(expenseId);
+			this.observePurchases(expenseId, month);
 			this.observeExpense(expenseId);
 		}
 	},
@@ -56,8 +56,8 @@ const PurchasesByExpense = React.createClass({
 
 	////////////////////////////////////////
 
-	observePurchases(expenseId) {
-		this.stopObservingPurchases = observePurchases({ expenseId }, (purchases) => {
+	observePurchases(expenseId, month) {
+		this.stopObservingPurchases = observePurchases({ expenseId, month }, (purchases) => {
 			this.setState({ purchases });
 		});
 	},
@@ -68,6 +68,10 @@ const PurchasesByExpense = React.createClass({
 		});
 	},
 
+	onMonthChanged(month) {
+		this.context.router.push(`/purchases/${month}/by-expense/${this.props.params.expenseId}`);
+	},
+
 	////////////////////////////////////////
 
 	render() {
@@ -76,7 +80,14 @@ const PurchasesByExpense = React.createClass({
 			return null;
 		}
 
-		return <PurchasesTable purchases={purchases} totalBudgeted={expense.cost} />;
+		return (
+			<PurchasesTable
+				purchases={purchases}
+				totalBudgeted={expense.cost}
+			    month={this.props.params.month}
+			    onMonthChanged={this.onMonthChanged}
+			/>
+		);
 	}
 
 });

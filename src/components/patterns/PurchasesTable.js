@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import React from 'react';
+import moment from 'moment';
 import Expense from 'app/models/expense';
 import Purchase from 'app/models/purchase';
 import Icon from 'app/components/util/Icon';
@@ -22,7 +23,9 @@ const PurchasesTable = React.createClass({
 
 	propTypes: {
 		purchases: React.PropTypes.arrayOf(React.PropTypes.instanceOf(Purchase)).isRequired,
-		totalBudgeted: React.PropTypes.number.isRequired
+		totalBudgeted: React.PropTypes.number.isRequired,
+		month: React.PropTypes.string.isRequired,
+		onMonthChanged: React.PropTypes.func.isRequired
 	},
 
 	getInitialState() {
@@ -58,10 +61,28 @@ const PurchasesTable = React.createClass({
 		return (expense ? expense.name : '-');
 	},
 
+	getAvailableMonths() {
+		const months = [];
+		const date = moment([2016, 11]);
+
+		while (date.valueOf() <= Date.now()) {
+			months.push(date.format('YYYY-MM'));
+
+			date.add(1, 'month');
+		}
+
+		return months;
+	},
+
+	onMonthChanged(event) {
+		const month = event.target.value;
+		this.props.onMonthChanged(month);
+	},
+
 	////////////////////////////////////////
 
 	render() {
-		const { purchases, totalBudgeted } = this.props;
+		const { purchases, totalBudgeted, month } = this.props;
 
 		const headers = [
 			{ label: 'Date' },
@@ -74,7 +95,7 @@ const PurchasesTable = React.createClass({
 		const data = purchases.map((purchase) => {
 			return [
 				purchase.date.format('MMM D'),
-				<Link to={`/purchases/by-expense/${purchase.expenseId}`}>
+				<Link to={`/purchases/${month}/by-expense/${purchase.expenseId}`}>
 					{this.getExpenseName(purchase.expenseId)}
 				</Link>,
 				purchase.description,
@@ -133,7 +154,35 @@ const PurchasesTable = React.createClass({
 			};
 		}
 
-		return <Table {...props} />;
+		const dropdownStyle = {
+			position: 'absolute',
+			top: 0,
+			left: 0,
+			width: '100%',
+			height: '100%',
+			opacity: 0,
+			cursor: 'pointer'
+		};
+
+		return (
+			<div>
+				<div style={{position: 'relative', textAlign: 'center'}}>
+					<h3 style={{marginBottom: '0.5em', fontWeight: 'bold'}}>
+						{moment(this.props.month, 'YYYY-MM').format('MMMM YYYY')}
+					</h3>
+					<select style={dropdownStyle} value={this.props.month} onChange={this.onMonthChanged}>
+						{this.getAvailableMonths().map((month) => {
+							return (
+								<option value={month} key={month}>
+									{moment(month, 'YYYY-MM').format('MMMM YYYY')}
+								</option>
+							);
+						})}
+					</select>
+				</div>
+				<Table {...props} />
+			</div>
+		);
 	}
 
 });

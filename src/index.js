@@ -3,8 +3,9 @@ window.Tether = require('tether');
 require('bootstrap');
 
 import React from 'react';
+import moment from 'moment';
 import ReactDOM from 'react-dom';
-import { Router, Route, IndexRoute, hashHistory } from 'react-router';
+import { Router, Route, Redirect, IndexRedirect, IndexRoute, hashHistory } from 'react-router';
 
 import App from './components/App';
 import Home from './components/pages/Home';
@@ -42,19 +43,20 @@ const routeChange = (prevState, nextState, replace) => {
 
 const page = (
 	<Router history={hashHistory}>
-		<Route path='/' component={App} onEnter={enterApp} onChange={routeChange}>
+		<Route component={App} onEnter={enterApp} onChange={routeChange}>
 			<IndexRoute component={Home} />
-			<Route path='/sign-in' component={SignIn} />
-			<Route path='/budget'>
+			<Route path='sign-in' component={SignIn} />
+			<Route path='budget'>
 				<IndexRoute component={Budget} />
-				<Route path='/budget/add-expense' component={AddExpense} />
-				<Route path='/budget/expenses/:expenseId/details' component={ExpenseDetails} />
+				<Route path='add-expense' component={AddExpense} />
+				<Route path='expenses/:expenseId/details' component={ExpenseDetails} />
 			</Route>
-			<Route path='/purchases'>
-				<IndexRoute component={PurchasesList} />
-				<Route path='/purchases/by-expense/:expenseId' component={PurchasesByExpense} />
-				<Route path='/purchases/add-purchase' component={AddPurchase} />
-				<Route path='/purchases/:purchaseId/details' component={PurchaseDetails} />
+			<Route path='purchases'>
+				<IndexRedirect to={`/purchases/${moment().format('YYYY-MM')}`} />
+				<Route path=':month/by-expense/:expenseId' component={PurchasesByExpense} />
+				<Route path='add-purchase' component={AddPurchase} />
+				<Route path=':purchaseId/details' component={PurchaseDetails} />
+				<Route path=':month' component={PurchasesList} />
 			</Route>
 		</Route>
 	</Router>

@@ -1,4 +1,5 @@
 import React from 'react';
+import moment from 'moment';
 import NavLink from './util/NavLink';
 
 import { Link } from 'react-router';
@@ -22,7 +23,7 @@ const App = React.createClass({
 						<ul className='nav navbar-nav'>
 							<NavLink to='/budget'>Budget</NavLink>
 							<NavLink to='/budget/add-expense'>Add Expense</NavLink>
-							<NavLink to='/purchases'>Purchases</NavLink>
+							<NavLink to={`/purchases/${moment().format('YYYY-MM')}`}>Purchases</NavLink>
 							<NavLink to='/purchases/add-purchase'>Log Purchase</NavLink>
 						</ul>
 					</div>

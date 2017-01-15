@@ -10,11 +10,13 @@ const createDataRef = (path) => {
 	return firebase.database().ref(`data/${uid}/${path}`);
 };
 
-const observePurchases = (query, callback) => {
+const observePurchases = (queryParams, callback) => {
+	const { month, ...query } = queryParams;
+
 	const dataRef = createDataRef('transactions/purchases').
 		orderByChild('date').
-		startAt(moment().startOf('month').format('YYYY-MM-DD')).
-		endAt(moment().endOf('month').format('YYYY-MM-DD'));
+		startAt(moment(month, 'YYYY-MM').startOf('month').format('YYYY-MM-DD')).
+		endAt(moment(month, 'YYYY-MM').endOf('month').format('YYYY-MM-DD'));
 
 	const valueCallback = (purchasesSnapshot) => {
 		const purchases = [];
