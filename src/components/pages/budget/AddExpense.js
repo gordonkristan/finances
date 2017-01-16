@@ -28,8 +28,7 @@ const App = React.createClass({
 			frequency: this.state.frequency,
 			isDisabled: false,
 			autoPay: this.state.autoPay,
-			fixedCost: this.state.fixedCost,
-			priority: 0
+			fixedCost: this.state.fixedCost
 		};
 
 		createExpense(expense, (success) => {
