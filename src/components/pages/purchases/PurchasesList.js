@@ -77,7 +77,7 @@ const PurchasesList = React.createClass({
 				purchases={purchases}
 				totalBudgeted={totalBudgeted}
 				month={this.props.params.month}
-			    onMonthChanged={this.onMonthChanged}
+				onMonthChanged={this.onMonthChanged}
 			/>
 		);
 	}
