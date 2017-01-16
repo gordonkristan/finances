@@ -5,7 +5,7 @@ require('bootstrap');
 import React from 'react';
 import moment from 'moment';
 import ReactDOM from 'react-dom';
-import { Router, Route, Redirect, IndexRedirect, IndexRoute, hashHistory } from 'react-router';
+import { Router, Route, IndexRedirect, IndexRoute, hashHistory } from 'react-router';
 
 import App from './components/App';
 import Home from './components/pages/Home';
@@ -43,7 +43,7 @@ const routeChange = (prevState, nextState, replace) => {
 
 const page = (
 	<Router history={hashHistory}>
-		<Route component={App} onEnter={enterApp} onChange={routeChange}>
+		<Route path='/' component={App} onEnter={enterApp} onChange={routeChange}>
 			<IndexRoute component={Home} />
 			<Route path='sign-in' component={SignIn} />
 			<Route path='budget'>
