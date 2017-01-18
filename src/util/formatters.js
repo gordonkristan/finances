@@ -1,11 +1,15 @@
 const formatDollarAmount = (amount) => {
-	const formattedAmount = `$${amount.toLocaleString()}`;
+	let formattedAmount = `$${amount.toLocaleString()}`;
 
 	if (formattedAmount.includes('.')) {
-		return formattedAmount.slice(0, formattedAmount.lastIndexOf('.') + 3);
-	} else {
-		return formattedAmount;
+		formattedAmount = formattedAmount.slice(0, formattedAmount.lastIndexOf('.') + 3);
+
+		if (formattedAmount.indexOf('.') === formattedAmount.length - 2) {
+			formattedAmount += '0';
+		}
 	}
+
+	return formattedAmount;
 };
 
 const formatBillingFrequency = (frequency) => {
