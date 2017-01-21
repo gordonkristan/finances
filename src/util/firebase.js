@@ -91,18 +91,9 @@ const observeExpense = (expenseId, callback) => {
 };
 
 const createExpense = (data, callback) => {
-	const expensesCallback = (expenses) => {
-		cancelObserver();
-
-		const priority = _.max(_.map(expenses, 'priority')) + 1;
-		const expense = Object.assign({ priority }, data);
-
-		createDataRef(`budget/expenses`).push(expense, (error) => {
-			callback(!error);
-		});
-	};
-
-	const cancelObserver = observeExpenses(expensesCallback);
+	createDataRef(`budget/expenses`).push(data, (error) => {
+		callback(!error);
+	});
 };
 
 export {
