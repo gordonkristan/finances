@@ -6,6 +6,8 @@ mkdir dist
 
 echo 'Moving assets...'
 cp -r public/* dist/
+rm -f dist/vendor.js
+rm -f dist/vendor.*.js
 rm -f dist/app.js
 rm -f dist/app.*.js
 
