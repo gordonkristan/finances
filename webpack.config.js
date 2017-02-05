@@ -10,7 +10,10 @@ const vendorChunkPlugin = new webpack.optimize.CommonsChunkPlugin({
 
 module.exports = {
 	entry: {
-		vendor: ['jquery', 'tether', 'bootstrap', 'react', 'react-dom', 'react-router', 'moment', 'lodash'],
+		vendor: [
+			'./src/library-shim.js', 'jquery', 'tether', 'bootstrap', 'react', 'react-dom', 'react-router', 'moment',
+			'lodash'
+		],
 		app: './src/index.js'
 	},
 	output: {
