@@ -1,7 +1,4 @@
-const $ = window.jQuery = window.$ = require('jquery');
-window.Tether = require('tether');
-require('bootstrap');
-
+import $ from 'jquery';
 import React from 'react';
 import moment from 'moment';
 import ReactDOM from 'react-dom';
