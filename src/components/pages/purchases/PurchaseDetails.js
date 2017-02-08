@@ -1,66 +1,56 @@
 import React from 'react';
+import Expense from 'app/models/expense';
+import Purchase from 'app/models/purchase';
 
-import {
-	observePurchase,
-	observeExpenses
-} from 'app/util/firebase';
-
-const PurchaseDetails = React.createClass({
-	propTypes: {
+class PurchaseDetails extends React.Component {
+	static propTypes = {
 		params: React.PropTypes.object.isRequired
-	},
+	};
 
-	getInitialState() {
-		return {
-			purchase: null,
-			expenses: [],
-			cost: '',
-			expenseId: undefined,
-			description: '',
-			date: ''
-		};
-	},
+	static propsTypes = {
+		models: React.PropTypes.shape({
+			purchase: React.PropTypes.instanceOf(Purchase).isRequired,
+			expenses: React.PropTypes.arrayOf(React.PropTypes.instanceOf(Expense)).isRequired
+		}).isRequired
+	};
 
-	componentDidMount() {
-		const { purchaseId } = this.props.params;
+	constructor(props) {
+		super(props);
 
-		this.stopObservingPurchase = observePurchase(purchaseId, this.purchaseUpdated);
-		this.stopObservingExpenses = observeExpenses((expenses) => {
-			this.setState({ expenses });
-		});
-	},
+		this.state = this.purchaseToState(props.models.purchase);
+	}
 
-	componentWillUnmount() {
-		this.stopObservingPurchase();
-		this.stopObservingExpenses();
-	},
+	componentWillReceiveProps(nextProps) {
+		const { purchase } = nextProps.models;
+		this.setState(this.purchaseToState(purchase));
+	}
 
 	////////////////////////////////////////
 
-	purchaseUpdated(purchase) {
-		this.setState({
-			purchase,
-			cost: purchase.cost.toString(),
+	purchaseToState(purchase) {
+		return {
+			cost: purchase.cost,
 			expenseId: purchase.expenseId,
 			description: purchase.description,
 			date: purchase.date.format('YYYY-MM-DD')
-		});
-	},
+		};
+	}
 
 	updateValue(key, event) {
 		this.setState({
 			[key]: event.target.value
 		});
-	},
+	}
 
 	save() {
-		const { purchase, cost, expenseId, description, date } = this.state;
+		const { purchase } = this.props.models;
+		const { cost, expenseId, description, date } = this.state;
 
 		purchase.cost = parseInt(cost, 10);
 		purchase.description = description;
 		purchase.expenseId = expenseId;
 		purchase.date = date;
-	},
+	}
 
 	////////////////////////////////////////
 
@@ -78,7 +68,7 @@ const PurchaseDetails = React.createClass({
 							pattern='[0-9]*'
 							inputMode='numeric'
 							value={this.state.cost}
-							onChange={this.updateValue.bind(null, 'cost')}
+							onChange={this.updateValue.bind(this, 'cost')}
 						/>
 					</div>
 					<div className='form-group'>
@@ -87,9 +77,9 @@ const PurchaseDetails = React.createClass({
 							id='purchase-edit-expense'
 							className='form-control'
 							value={this.state.expenseId}
-							onChange={this.updateValue.bind(null, 'expenseId')}
+							onChange={this.updateValue.bind(this, 'expenseId')}
 						>
-							{this.state.expenses.map((expense) => {
+							{this.props.models.expenses.map((expense) => {
 								return (
 									<option value={expense.id} key={expense.id}>
 										{expense.name}
@@ -104,7 +94,7 @@ const PurchaseDetails = React.createClass({
 							id='purchase-edit-description'
 							className='form-control'
 							value={this.state.description}
-							onChange={this.updateValue.bind(null, 'description')}
+							onChange={this.updateValue.bind(this, 'description')}
 						/>
 					</div>
 					<div className='form-group'>
@@ -114,14 +104,16 @@ const PurchaseDetails = React.createClass({
 							className='form-control'
 							type='date'
 							value={this.state.date}
-							onChange={this.updateValue.bind(null, 'date')}
+							onChange={this.updateValue.bind(this, 'date')}
 						/>
 					</div>
-					<button className='btn btn-success' onClick={this.save}>Save</button>
+					<button className='btn btn-success' onClick={this.save.bind(this)}>
+						Save
+					</button>
 				</form>
 			</div>
 		);
 	}
-});
+}
 
 export default PurchaseDetails;

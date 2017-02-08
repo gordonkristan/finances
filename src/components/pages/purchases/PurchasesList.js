@@ -1,72 +1,31 @@
 import React from 'react';
+import Expense from 'app/models/expense';
+import Purchase from 'app/models/purchase';
 import PurchasesTable from 'app/components/patterns/PurchasesTable';
 
-import { isMobile } from 'app/util/mobile';
-import { formatDollarAmount } from 'app/util/formatters';
-import {
-	observePurchases,
-	observeExpenses
-} from 'app/util/firebase';
+class PurchasesList extends React.Component {
 
-const PurchasesList = React.createClass({
-
-	contextTypes: {
+	static contextTypes = {
 		router: React.PropTypes.object
-	},
+	};
 
-	propsTypes: {
-		params: React.PropTypes.object.isRequired
-	},
-
-	getInitialState() {
-		return {
-			purchases: null,
-			expenses: null
-		};
-	},
-
-	componentDidMount() {
-		this.observePurchases(this.props.params.month);
-
-		this.stopObservingExpenses = observeExpenses((expenses) => {
-			this.setState({ expenses });
-		});
-	},
-
-	componentWillReceiveProps(nextProps) {
-		const { month } = nextProps.params;
-
-		if (this.props.params.month !== month) {
-			this.stopObservingPurchases();
-			this.setState({ purchases: null });
-			this.observePurchases(month);
-		}
-	},
-
-	componentWillUnmount() {
-		this.stopObservingPurchases();
-		this.stopObservingExpenses();
-	},
+	static propsTypes = {
+		models: React.PropTypes.shape({
+			expenses: React.PropTypes.arrayOf(React.PropTypes.instanceOf(Expense)).isRequired,
+			purchases: React.PropTypes.arrayOf(React.PropTypes.instanceOf(Purchase)).isRequired
+		}).isRequired
+	};
 
 	////////////////////////////////////////
 
-	observePurchases(month) {
-		this.stopObservingPurchases = observePurchases({ month }, (purchases) => {
-			this.setState({ purchases });
-		});
-	},
-
 	onMonthChanged(month) {
 		this.context.router.push(`/purchases/${month}`);
-	},
+	}
 
 	////////////////////////////////////////
 
 	render() {
-		const { purchases, expenses } = this.state;
-		if (!purchases || !expenses) {
-			return null;
-		}
+		const { purchases, expenses } = this.props.models;
 
 		const totalBudgeted = expenses.reduce((total, expense) => {
 			return (total + expense.monthlyCost);
@@ -77,11 +36,11 @@ const PurchasesList = React.createClass({
 				purchases={purchases}
 				totalBudgeted={totalBudgeted}
 				month={this.props.params.month}
-				onMonthChanged={this.onMonthChanged}
+				onMonthChanged={this.onMonthChanged.bind(this)}
 			/>
 		);
 	}
 
-});
+}
 
 export default PurchasesList;

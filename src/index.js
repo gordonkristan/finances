@@ -7,13 +7,14 @@ import { Router, Route, IndexRedirect, IndexRoute, hashHistory } from 'react-rou
 import App from './components/App';
 import Home from './components/pages/Home';
 import SignIn from './components/pages/SignIn';
-import Budget from './components/pages/budget/Budget';
 import AddExpense from './components/pages/budget/AddExpense';
-import AddPurchase from './components/pages/purchases/AddPurchase';
-import PurchasesList from './components/pages/purchases/PurchasesList';
 import ExpenseDetails from './components/pages/budget/expenses/Details';
-import PurchaseDetails from './components/pages/purchases/PurchaseDetails';
-import PurchasesByExpense from './components/pages/purchases/PurchasesByExpense';
+
+import BudgetRouteContainer from './routes/budget/index';
+import AddPurchaseRouteContainer from './routes/purchases/add-purchase';
+import PurchasesByMonthRouteContainer from './routes/purchases/by-month';
+import PurchasesByExpenseRouteContainer from './routes/purchases/by-expense';
+import PurchaseDetailRouteContainer from './routes/purchases/purchase-details';
 
 const enterApp = (nextState, replace, callback) => {
 	firebase.auth().onAuthStateChanged((user) => {
@@ -44,16 +45,16 @@ const page = (
 			<IndexRoute component={Home} />
 			<Route path='sign-in' component={SignIn} />
 			<Route path='budget'>
-				<IndexRoute component={Budget} />
+				<IndexRoute component={BudgetRouteContainer} />
 				<Route path='add-expense' component={AddExpense} />
 				<Route path='expenses/:expenseId/details' component={ExpenseDetails} />
 			</Route>
 			<Route path='purchases'>
 				<IndexRedirect to={`/purchases/${moment().format('YYYY-MM')}`} />
-				<Route path=':month/by-expense/:expenseId' component={PurchasesByExpense} />
-				<Route path='add-purchase' component={AddPurchase} />
-				<Route path=':purchaseId/details' component={PurchaseDetails} />
-				<Route path=':month' component={PurchasesList} />
+				<Route path=':month/by-expense/:expenseId' component={PurchasesByExpenseRouteContainer} />
+				<Route path='add-purchase' component={AddPurchaseRouteContainer} />
+				<Route path=':purchaseId/details' component={PurchaseDetailRouteContainer} />
+				<Route path=':month' component={PurchasesByMonthRouteContainer} />
 			</Route>
 		</Route>
 	</Router>

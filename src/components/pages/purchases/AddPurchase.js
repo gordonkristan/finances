@@ -1,40 +1,33 @@
 import _ from 'lodash';
 import React from 'react';
 import moment from 'moment';
+import Expense from 'app/models/expense';
 import Form from 'app/components/util/Form';
 
-import { observeExpenses } from 'app/util/firebase';
+class AddPurchase extends React.Component {
 
-const AddPurchase = React.createClass({
+	static propTypes = {
+		models: React.PropTypes.shape({
+			expenses: React.PropTypes.arrayOf(React.PropTypes.instanceOf(Expense)).isRequired
+		}).isRequired
+	};
 
-	getInitialState() {
-		return {
-			expenses: null,
+	constructor(props) {
+		super(props);
+
+		this.state = {
 			cost: 0,
-			expenseId: undefined,
+			expenseId: props.models.expenses[0].id,
 			description: '',
 			date: moment()
 		};
-	},
-
-	componentDidMount() {
-		this.stopObservingExpenses = observeExpenses((expenses) => {
-			this.setState({
-				expenses,
-				expenseId: (this.state.expenseId || expenses[0].id)
-			});
-		});
-	},
-
-	componentWillUnmount() {
-		this.stopObservingExpenses();
-	},
+	}
 
 	////////////////////////////////////////
 
 	onValueUpdated(name, value) {
 		if (name === 'expenseId') {
-			const expense = this.state.expenses.find(({ id }) => {
+			const expense = this.props.models.expenses.find(({ id }) => {
 				return (id === value);
 			});
 
@@ -48,7 +41,7 @@ const AddPurchase = React.createClass({
 		}
 
 		this.setState({ [name]: value });
-	},
+	}
 
 	add() {
 		const stateProperties = ['cost', 'expenseId', 'description', 'date'];
@@ -63,12 +56,13 @@ const AddPurchase = React.createClass({
 				description: ''
 			});
 		});
-	},
+	}
 
 	////////////////////////////////////////
 
 	render() {
-		const { expenses, cost, expenseId, description, date } = this.state;
+		const { expenses } = this.props.models;
+		const { cost, expenseId, description, date } = this.state;
 
 		if (!expenses) {
 			return null;
@@ -110,12 +104,12 @@ const AddPurchase = React.createClass({
 					title='Purchase Details'
 					fields={fields}
 					submitText='Save'
-					onValueUpdated={this.onValueUpdated}
-					onSubmit={this.add}
+					onValueUpdated={this.onValueUpdated.bind(this)}
+					onSubmit={this.add.bind(this)}
 				/>
 			</div>
 		);
 	}
-});
+}
 
 export default AddPurchase;

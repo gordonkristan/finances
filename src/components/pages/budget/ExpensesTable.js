@@ -1,10 +1,10 @@
 import React from 'react';
+import Expense from 'app/models/expense';
 import Icon from 'app/components/util/Icon';
 import Table from 'app/components/util/Table';
 
 import { Link } from 'react-router';
 import { isMobile } from 'app/util/mobile';
-import { observeExpenses } from 'app/util/firebase';
 import {
 	formatDollarAmount,
 	formatBillingFrequency
@@ -13,39 +13,15 @@ import {
 const CHECK_ICON = <Icon name='check' style={{color: 'green'}} />;
 const CROSS_ICON = <Icon name='close' style={{color: 'red'}} />;
 
-const ExpensesTable = React.createClass({
+class ExpensesTable extends React.Component {
 
-	contextTypes: {
+	static contextTypes = {
 		router: React.PropTypes.object
-	},
+	};
 
-	getInitialState() {
-		return {
-			expenses: []
-		};
-	},
-
-	componentDidMount() {
-		this.cancelObserver = observeExpenses((expenses) => {
-			this.setState({ expenses });
-		});
-	},
-
-	componentWillUnmount() {
-		this.cancelObserver();
-	},
-
-	////////////////////////////////////////
-
-	moveExpenseUp(expense) {
-		expense.raisePriority();
-	},
-
-	moveExpenseDown(expense) {
-		expense.lowerPriority();
-	},
-
-	////////////////////////////////////////
+	static propTypes = {
+		expenses: React.PropTypes.arrayOf(React.PropTypes.instanceOf(Expense)).isRequired
+	};
 
 	renderMobileTable() {
 		const headers = [
@@ -53,7 +29,7 @@ const ExpensesTable = React.createClass({
 			{ label: 'Cost', justification: 'right' }
 		];
 
-		const data = this.state.expenses.map((expense) => {
+		const data = this.props.expenses.map((expense) => {
 			return [
 				expense.name,
 				formatDollarAmount(expense.monthlyCost)
@@ -62,18 +38,18 @@ const ExpensesTable = React.createClass({
 
 		const footers = [[
 			'Total Budgeted',
-			formatDollarAmount(this.state.expenses.reduce((total, expense) => {
+			formatDollarAmount(this.props.expenses.reduce((total, expense) => {
 				return (total + expense.monthlyCost);
 			}, 0)),
 		]];
 
 		const onRowClicked = (row, index) => {
-			const expense = this.state.expenses[index];
+			const expense = this.props.expenses[index];
 			this.context.router.push(`/purchases/by-expense/${expense.id}`);
 		};
 
 		return { headers, data, footers, onRowClicked };
-	},
+	}
 
 	renderDesktopTable() {
 		const headers = [
@@ -84,12 +60,10 @@ const ExpensesTable = React.createClass({
 			{ label: 'AutoPay', justification: 'center' },
 			{ label: 'Fixed Cost', justification: 'center' },
 			{ label: '', justification: 'center' },
-			{ label: '', justification: 'center' },
-			{ label: '', justification: 'center' },
 			{ label: '', justification: 'center' }
 		];
 
-		const data = this.state.expenses.map((expense, index, expenses) => {
+		const data = this.props.expenses.map((expense) => {
 			return [
 				expense.name,
 				formatDollarAmount(expense.cost),
@@ -102,32 +76,16 @@ const ExpensesTable = React.createClass({
 				</Link>,
 				<Link to={`/budget/expenses/${expense.id}/details`} title='Edit Expense'>
 					<Icon name='cog' />
-				</Link>,
-				(index !== 0 &&
-					<i
-						className='fa fa-caret-up'
-						style={{cursor: 'pointer'}}
-						onClick={this.moveExpenseUp.bind(null, expense)}
-					/>
-				),
-				(index !== expenses.length - 1 &&
-					<i
-						className='fa fa-caret-down'
-						style={{cursor: 'pointer'}}
-						onClick={this.moveExpenseDown.bind(null, expense)}
-					/>
-				)
+				</Link>
 			];
 		});
 
 		const footers = [[
 			'Total Budgeted Monthly',
 			null,
-			formatDollarAmount(this.state.expenses.reduce((total, expense) => {
+			formatDollarAmount(this.props.expenses.reduce((total, expense) => {
 				return (total + expense.monthlyCost);
 			}, 0)),
-			null,
-			null,
 			null,
 			null,
 			null,
@@ -136,7 +94,7 @@ const ExpensesTable = React.createClass({
 		]];
 
 		return { headers, data, footers };
-	},
+	}
 
 	render() {
 		const props = (isMobile ? this.renderMobileTable() : this.renderDesktopTable());
@@ -144,6 +102,6 @@ const ExpensesTable = React.createClass({
 		return <Table {...props} />;
 	}
 
-});
+}
 
 export default ExpensesTable;
