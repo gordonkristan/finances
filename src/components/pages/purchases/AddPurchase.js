@@ -64,10 +64,6 @@ class AddPurchase extends React.Component {
 		const { expenses } = this.props.models;
 		const { cost, expenseId, description, date } = this.state;
 
-		if (!expenses) {
-			return null;
-		}
-
 		const fields = [
 			{
 				type: 'number',
@@ -101,7 +97,7 @@ class AddPurchase extends React.Component {
 		return (
 			<div className='col-xs-12 col-md-8 offset-md-2'>
 				<Form
-					title='Purchase Details'
+					title='Add Purchase'
 					fields={fields}
 					submitText='Save'
 					onValueUpdated={this.onValueUpdated.bind(this)}
