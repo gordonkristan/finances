@@ -58,8 +58,8 @@ const App = React.createClass({
 			},
 			{
 				type: 'select',
-				name: 'expenseId',
-				title: 'Expense',
+				name: 'frequency',
+				title: 'Frequency',
 				options: [
 					{ title: 'Daily', value: 'daily' },
 					{ title: 'Weekly', value: 'weekly' },
