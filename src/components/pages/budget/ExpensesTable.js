@@ -1,7 +1,8 @@
 import React from 'react';
-import Expense from 'app/models/expense';
+import moment from 'moment';
 import Icon from 'app/components/util/Icon';
 import Table from 'app/components/util/Table';
+import ExpenseCategory from 'app/models/expense-category';
 
 import { Link } from 'react-router';
 import { isMobile } from 'app/util/mobile';
@@ -20,38 +21,55 @@ class ExpensesTable extends React.Component {
 	};
 
 	static propTypes = {
-		expenses: React.PropTypes.arrayOf(React.PropTypes.instanceOf(Expense)).isRequired
+		expenseCategories: React.PropTypes.arrayOf(React.PropTypes.instanceOf(ExpenseCategory)).isRequired
 	};
 
-	renderMobileTable() {
-		const headers = [
-			{ label: 'Name' },
-			{ label: 'Cost', justification: 'right' }
-		];
+	////////////////////////////////////////
 
-		const data = this.props.expenses.map((expense) => {
-			return [
-				expense.name,
-				formatDollarAmount(expense.monthlyCost)
-			];
-		});
+	getTableRows(expenseCategories) {
+		return expenseCategories.reduce((rows, category) => {
+			const categoryRow = this.getCategoryRow(category);
+			const expenseRows = category.expenses.map(this.getExpenseRow.bind(this));
 
-		const footers = [[
-			'Total Budgeted',
-			formatDollarAmount(this.props.expenses.reduce((total, expense) => {
-				return (total + expense.monthlyCost);
-			}, 0)),
-		]];
-
-		const onRowClicked = (row, index) => {
-			const expense = this.props.expenses[index];
-			this.context.router.push(`/purchases/by-expense/${expense.id}`);
-		};
-
-		return { headers, data, footers, onRowClicked };
+			return rows.concat([categoryRow]).concat(expenseRows);
+		}, []);
 	}
 
-	renderDesktopTable() {
+	getCategoryRow(category) {
+		return [
+			<Link to={`/purchases/${moment().format('YYYY-MM')}/by-category/${category.id}`}>
+				{category.name}
+			</Link>,
+			null,
+			formatDollarAmount(category.monthlyCost),
+			null,
+			null,
+			null,
+			<Link to={`/budget/categories/${category.id}/details`} title='Edit Expense'>
+				<Icon name='cog' />
+			</Link>
+		];
+	}
+
+	getExpenseRow(expense) {
+		return [
+			<Link to={`/purchases/${moment().format('YYYY-MM')}/by-expense/${expense.id}`} style={{marginLeft: '2em'}}>
+				{expense.name}
+			</Link>,
+			formatDollarAmount(expense.cost),
+			formatDollarAmount(expense.monthlyCost),
+			formatBillingFrequency(expense.frequency),
+			(expense.autoPay ? CHECK_ICON : CROSS_ICON),
+			(expense.fixedCost ? CHECK_ICON : CROSS_ICON),
+			<Link to={`/budget/expenses/${expense.id}/details`} title='Edit Expense'>
+				<Icon name='cog' />
+			</Link>
+		];
+	}
+
+	////////////////////////////////////////
+
+	render() {
 		const headers = [
 			{ label: 'Name' },
 			{ label: 'Cost', justification: 'right' },
@@ -63,43 +81,21 @@ class ExpensesTable extends React.Component {
 			{ label: '', justification: 'center' }
 		];
 
-		const data = this.props.expenses.map((expense) => {
-			return [
-				expense.name,
-				formatDollarAmount(expense.cost),
-				formatDollarAmount(expense.monthlyCost),
-				formatBillingFrequency(expense.frequency),
-				(expense.autoPay ? CHECK_ICON : CROSS_ICON),
-				(expense.fixedCost ? CHECK_ICON : CROSS_ICON),
-				<Link to={`/purchases/by-expense/${expense.id}`} title='View Purchases'>
-					<Icon name='bars' />
-				</Link>,
-				<Link to={`/budget/expenses/${expense.id}/details`} title='Edit Expense'>
-					<Icon name='cog' />
-				</Link>
-			];
-		});
+		const data = this.getTableRows(this.props.expenseCategories);
 
 		const footers = [[
 			'Total Budgeted Monthly',
 			null,
-			formatDollarAmount(this.props.expenses.reduce((total, expense) => {
-				return (total + expense.monthlyCost);
+			formatDollarAmount(this.props.expenseCategories.reduce((total, category) => {
+				return (total + category.monthlyCost);
 			}, 0)),
-			null,
 			null,
 			null,
 			null,
 			null
 		]];
 
-		return { headers, data, footers };
-	}
-
-	render() {
-		const props = (isMobile ? this.renderMobileTable() : this.renderDesktopTable());
-
-		return <Table {...props} />;
+		return <Table headers={headers} data={data} footers={footers} />;
 	}
 
 }

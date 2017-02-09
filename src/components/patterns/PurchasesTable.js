@@ -1,65 +1,48 @@
 import _ from 'lodash';
 import React from 'react';
 import moment from 'moment';
-import Expense from 'app/models/expense';
 import Purchase from 'app/models/purchase';
 import Icon from 'app/components/util/Icon';
 import Table from 'app/components/util/Table';
+import ExpenseCategory from 'app/models/expense-category';
 
 import { Link } from 'react-router';
 import { isMobile } from 'app/util/mobile';
-import { createDataRef } from 'app/util/firebase';
 import { formatDollarAmount } from 'app/util/formatters';
 
 const pickArrayIndices = (array, indices) => {
 	return _.map(indices, (index) => array[index]);
 };
 
-const PurchasesTable = React.createClass({
+class PurchasesTable extends React.Component {
 
-	contextTypes: {
+	static contextTypes = {
 		router: React.PropTypes.object
-	},
+	};
 
-	propTypes: {
+	static propTypes = {
+		expenseCategories: React.PropTypes.arrayOf(React.PropTypes.instanceOf(ExpenseCategory)).isRequired,
 		purchases: React.PropTypes.arrayOf(React.PropTypes.instanceOf(Purchase)).isRequired,
 		totalBudgeted: React.PropTypes.number.isRequired,
 		month: React.PropTypes.string.isRequired,
 		onMonthChanged: React.PropTypes.func.isRequired
-	},
-
-	getInitialState() {
-		return {
-			expenses: {}
-		};
-	},
-
-	componentDidMount() {
-		this.expensesRef = createDataRef('budget/expenses');
-		this.expensesRef.on('value', this.expensesUpdated);
-	},
-
-	componentWillUnmount() {
-		this.expensesRef.off('value', this.expensesUpdated);
-	},
+	};
 
 	////////////////////////////////////////
 
-	expensesUpdated(expensesSnapshot) {
-		const expenses = {};
-
-		expensesSnapshot.forEach((expenseSnapshot) => {
-			const expense = new Expense(expenseSnapshot);
-			expenses[expense.id] = expense;
-		});
-
-		this.setState({ expenses });
-	},
-
 	getExpenseName(id) {
-		const expense = this.state.expenses[id];
-		return (expense ? expense.name : '-');
-	},
+		const { expenseCategories } = this.props;
+
+		for (let category of expenseCategories) {
+			if (category.id === id) {
+				return category.name;
+			}
+
+			if (category.hasExpense(id)) {
+				return category.getExpense(id).name;
+			}
+		}
+	}
 
 	getAvailableMonths() {
 		const months = [];
@@ -72,12 +55,12 @@ const PurchasesTable = React.createClass({
 		}
 
 		return months;
-	},
+	}
 
 	onMonthChanged(event) {
 		const month = event.target.value;
 		this.props.onMonthChanged(month);
-	},
+	}
 
 	////////////////////////////////////////
 
@@ -170,7 +153,7 @@ const PurchasesTable = React.createClass({
 					<h3 style={{marginBottom: '0.5em', fontWeight: 'bold'}}>
 						{moment(this.props.month, 'YYYY-MM').format('MMMM YYYY')}
 					</h3>
-					<select style={dropdownStyle} value={this.props.month} onChange={this.onMonthChanged}>
+					<select style={dropdownStyle} value={this.props.month} onChange={this.onMonthChanged.bind(this)}>
 						{this.getAvailableMonths().map((month) => {
 							return (
 								<option value={month} key={month}>
@@ -185,6 +168,6 @@ const PurchasesTable = React.createClass({
 		);
 	}
 
-});
+}
 
 export default PurchasesTable;

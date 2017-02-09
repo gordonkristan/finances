@@ -10,6 +10,9 @@ class PurchasesByExpense extends React.Component {
 	};
 
 	static propsTypes = {
+		params: React.PropTypes.shape({
+			month: React.PropTypes.string.isRequired
+		}).isRequired,
 		models: React.PropTypes.shape({
 			expense: React.PropTypes.instanceOf(Expense).isRequired,
 			purchases: React.PropTypes.arrayOf(React.PropTypes.instanceOf(Purchase)).isRequired
@@ -19,7 +22,7 @@ class PurchasesByExpense extends React.Component {
 	////////////////////////////////////////
 
 	onMonthChanged(month) {
-		this.context.router.push(`/purchases/${month}/by-expense/${this.props.params.expenseId}`);
+		this.context.router.push(`/purchases/${month}/by-expense/${this.props.models.expense.id}`);
 	}
 
 	////////////////////////////////////////
@@ -29,8 +32,9 @@ class PurchasesByExpense extends React.Component {
 
 		return (
 			<PurchasesTable
+				expenseCategories={[expense.category]}
 				purchases={purchases}
-				totalBudgeted={expense.cost}
+				totalBudgeted={expense.monthlyCost}
 			    month={this.props.params.month}
 			    onMonthChanged={this.onMonthChanged.bind(this)}
 			/>

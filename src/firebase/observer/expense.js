@@ -1,15 +1,23 @@
-import FirebaseObserver from './observer';
-import Expense from '../../models/expense';
+import ExpenseCategoriesObserver from './expense-categories';
 
-import { createDataRef } from 'app/util/firebase';
+class ExpenseObserver extends ExpenseCategoriesObserver {
+	_expenseId = null;
 
-class ExpenseObserver extends FirebaseObserver {
 	constructor(expenseId) {
-		super(createDataRef(`budget/expenses/${expenseId}`));
+		super();
+
+		this._expenseId = expenseId;
 	}
 
-	_transform(expenseSnapshot) {
-		return new Expense(expenseSnapshot);
+	_transform(snapshot) {
+		const categories = super._transform(snapshot);
+		const expenseId = this._expenseId;
+
+		for (let category of categories) {
+			if (category.hasExpense(expenseId)) {
+				return category.getExpense(expenseId);
+			}
+		}
 	}
 }
 

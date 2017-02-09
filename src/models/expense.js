@@ -1,8 +1,18 @@
 import Model from './model';
 
 class Expense extends Model {
+	constructor(snapshot, category) {
+		super(snapshot);
+
+		this._category = category;
+	}
+
 	get name() {
 		return this._val.name;
+	}
+
+	get category() {
+		return this._category;
 	}
 
 	get cost() {

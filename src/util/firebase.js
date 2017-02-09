@@ -6,9 +6,7 @@ const createDataRef = (path) => {
 };
 
 const createExpense = (data, callback) => {
-	createDataRef(`budget/expenses`).push(data, (error) => {
-		callback(!error);
-	});
+	alert('Not allowed');
 };
 
 export {

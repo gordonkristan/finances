@@ -14,6 +14,7 @@ import BudgetRouteContainer from './routes/budget/index';
 import AddPurchaseRouteContainer from './routes/purchases/add-purchase';
 import PurchasesByMonthRouteContainer from './routes/purchases/by-month';
 import PurchasesByExpenseRouteContainer from './routes/purchases/by-expense';
+import PurchasesByCategoryRouteContainer from './routes/purchases/by-category';
 import PurchaseDetailRouteContainer from './routes/purchases/purchase-details';
 
 const enterApp = (nextState, replace, callback) => {
@@ -51,6 +52,7 @@ const page = (
 			</Route>
 			<Route path='purchases'>
 				<IndexRedirect to={`/purchases/${moment().format('YYYY-MM')}`} />
+				<Route path=':month/by-category/:categoryId' component={PurchasesByCategoryRouteContainer} />
 				<Route path=':month/by-expense/:expenseId' component={PurchasesByExpenseRouteContainer} />
 				<Route path='add-purchase' component={AddPurchaseRouteContainer} />
 				<Route path=':purchaseId/details' component={PurchaseDetailRouteContainer} />

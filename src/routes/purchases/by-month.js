@@ -1,6 +1,6 @@
 import PurchasesList from 'app/components/pages/purchases/PurchasesList';
-import ExpensesObserver from 'app/firebase/observer/expenses';
 import PurchasesObserver from 'app/firebase/observer/purchases';
+import ExpenseCategoriesObserver from 'app/firebase/observer/expense-categories';
 
 import { createRouteComponent } from 'app/firebase/route';
 
@@ -9,7 +9,7 @@ const PurchasesByMonthRouteContainer = createRouteComponent({
 
 	getObservers({ month }) {
 		return {
-			expenses: new ExpensesObserver(),
+			expenseCategories: new ExpenseCategoriesObserver(),
 			purchases: new PurchasesObserver(month)
 		};
 	}

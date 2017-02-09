@@ -1,5 +1,5 @@
 import Budget from 'app/components/pages/budget/Budget';
-import ExpensesObserver from 'app/firebase/observer/expenses';
+import ExpenseCategoriesObserver from 'app/firebase/observer/expense-categories';
 
 import { createRouteComponent } from 'app/firebase/route';
 
@@ -8,7 +8,7 @@ const BudgetRouteContainer = createRouteComponent({
 
 	getObservers(params) {
 		return {
-			expenses: new ExpensesObserver()
+			expenseCategories: new ExpenseCategoriesObserver()
 		};
 	}
 });

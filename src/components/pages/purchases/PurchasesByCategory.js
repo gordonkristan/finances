@@ -3,15 +3,18 @@ import Purchase from 'app/models/purchase';
 import ExpenseCategory from 'app/models/expense-category';
 import PurchasesTable from 'app/components/patterns/PurchasesTable';
 
-class PurchasesList extends React.Component {
+class PurchasesByCategory extends React.Component {
 
 	static contextTypes = {
 		router: React.PropTypes.object
 	};
 
 	static propsTypes = {
+		params: React.PropTypes.shape({
+			month: React.PropTypes.string.isRequired
+		}).isRequired,
 		models: React.PropTypes.shape({
-			expenseCategories: React.PropTypes.arrayOf(React.PropTypes.instanceOf(ExpenseCategory)).isRequired,
+			category: React.PropTypes.instanceOf(ExpenseCategory).isRequired,
 			purchases: React.PropTypes.arrayOf(React.PropTypes.instanceOf(Purchase)).isRequired
 		}).isRequired
 	};
@@ -19,29 +22,25 @@ class PurchasesList extends React.Component {
 	////////////////////////////////////////
 
 	onMonthChanged(month) {
-		this.context.router.push(`/purchases/${month}`);
+		this.context.router.push(`/purchases/${month}/by-category/${this.props.models.category.id}`);
 	}
 
 	////////////////////////////////////////
 
 	render() {
-		const { purchases, expenseCategories } = this.props.models;
-
-		const totalBudgeted = expenseCategories.reduce((total, category) => {
-			return (total + category.monthlyCost);
-		}, 0);
+		const { purchases, category } = this.props.models;
 
 		return (
 			<PurchasesTable
-				expenseCategories={expenseCategories}
+				expenseCategories={[category]}
 				purchases={purchases}
-				totalBudgeted={totalBudgeted}
-				month={this.props.params.month}
-				onMonthChanged={this.onMonthChanged.bind(this)}
+				totalBudgeted={category.monthlyCost}
+			    month={this.props.params.month}
+			    onMonthChanged={this.onMonthChanged.bind(this)}
 			/>
 		);
 	}
 
 }
 
-export default PurchasesList;
+export default PurchasesByCategory;

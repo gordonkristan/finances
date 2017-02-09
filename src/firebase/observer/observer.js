@@ -4,7 +4,7 @@ class FirebaseObserver {
 
 	// null is a valid value
 	_lastData = undefined;
-	_callback = null;
+	_callback = () => {};
 	_ref = null;
 
 	constructor(ref) {
@@ -28,6 +28,7 @@ class FirebaseObserver {
 	destroy() {
 		this._ref.off();
 		this._lastData = null;
+		this._callback = null;
 		this._ref = null;
 	}
 }
