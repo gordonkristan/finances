@@ -7,10 +7,10 @@ import { Router, Route, IndexRedirect, IndexRoute, hashHistory } from 'react-rou
 import App from './components/App';
 import Home from './components/pages/Home';
 import SignIn from './components/pages/SignIn';
-import AddExpense from './components/pages/budget/AddExpense';
 import ExpenseDetails from './components/pages/budget/expenses/Details';
 
 import BudgetRouteContainer from './routes/budget/index';
+import AddExpenseRouteContainer from './routes/budget/add-expense';
 import AddPurchaseRouteContainer from './routes/purchases/add-purchase';
 import PurchasesByMonthRouteContainer from './routes/purchases/by-month';
 import PurchasesByExpenseRouteContainer from './routes/purchases/by-expense';
@@ -47,7 +47,7 @@ const page = (
 			<Route path='sign-in' component={SignIn} />
 			<Route path='budget'>
 				<IndexRoute component={BudgetRouteContainer} />
-				<Route path='add-expense' component={AddExpense} />
+				<Route path='add-expense' component={AddExpenseRouteContainer} />
 				<Route path='expenses/:expenseId/details' component={ExpenseDetails} />
 			</Route>
 			<Route path='purchases'>

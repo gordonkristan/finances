@@ -1,25 +1,35 @@
 import React from 'react';
 import Form from 'app/components/util/Form';
+import ExpenseCategory from 'app/models/expense-category';
 
 import { createExpense } from 'app/util/firebase';
 
-const App = React.createClass({
+class App extends React.Component {
 
-	getInitialState() {
-		return {
+	static propTypes = {
+		models: React.PropTypes.shape({
+			expenseCategories: React.PropTypes.arrayOf(React.PropTypes.instanceOf(ExpenseCategory)).isRequired
+		}).isRequired
+	};
+
+	constructor(props) {
+		super(props);
+
+		this.state = {
 			name: '',
 			cost: '',
+			categoryId: props.models.expenseCategories[0].id,
 			frequency: 'monthly',
 			autoPay: false,
 			fixedCost: false
 		};
-	},
+	}
 
 	////////////////////////////////////////
 
 	onValueUpdated(name, value) {
 		this.setState({ [name]: value });
-	},
+	}
 
 	add() {
 		const expense = {
@@ -31,17 +41,26 @@ const App = React.createClass({
 			fixedCost: this.state.fixedCost
 		};
 
-		createExpense(expense, (success) => {
+		const category = this.props.models.expenseCategories.find((category) => {
+			return (category.id === this.state.categoryId);
+		});
+
+		category.addExpense(expense, (success) => {
 			if (success) {
-				this.setState(this.getInitialState());
+				this.setState({
+					name: '',
+					cost: ''
+				});
+			} else {
+				alert('Something went wrong...');
 			}
 		});
-	},
+	}
 
 	////////////////////////////////////////
 
 	render() {
-		const { name, cost, frequency, autoPay, fixedCost } = this.state;
+		const { name, cost, frequency, autoPay, fixedCost, categoryId } = this.state;
 
 		const fields = [
 			{
@@ -55,6 +74,18 @@ const App = React.createClass({
 				name: 'cost',
 				title: 'Cost',
 				value: cost
+			},
+			{
+				type: 'select',
+				name: 'categoryId',
+				title: 'Category',
+				options: this.props.models.expenseCategories.map((category) => {
+					return {
+						title: category.name,
+						value: category.id
+					};
+				}),
+				value: categoryId
 			},
 			{
 				type: 'select',
@@ -90,13 +121,12 @@ const App = React.createClass({
 					title='Add Expense'
 					fields={fields}
 					submitText='Add'
-					onValueUpdated={this.onValueUpdated}
-					onSubmit={this.add}
+					onValueUpdated={this.onValueUpdated.bind(this)}
+					onSubmit={this.add.bind(this)}
 				/>
 			</div>
 		);
 	}
-
-});
+}
 
 export default App;

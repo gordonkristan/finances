@@ -42,6 +42,12 @@ class ExpenseCategory extends Model {
 			return (id === expenseId);
 		}) || null;
 	}
+
+	addExpense(expenseData, callback) {
+		this._snapshot.ref.child('expenses').push(expenseData, (error) => {
+			callback(!error);
+		});
+	}
 }
 
 export default ExpenseCategory;
