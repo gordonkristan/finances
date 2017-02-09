@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React from 'react';
 import moment from 'moment';
 import Icon from 'app/components/util/Icon';
@@ -13,6 +14,10 @@ import {
 
 const CHECK_ICON = <Icon name='check' style={{color: 'green'}} />;
 const CROSS_ICON = <Icon name='close' style={{color: 'red'}} />;
+
+const pickArrayIndices = (array, indices) => {
+	return _.map(indices, (index) => array[index]);
+};
 
 class ExpensesTable extends React.Component {
 
@@ -52,9 +57,11 @@ class ExpensesTable extends React.Component {
 	}
 
 	getExpenseRow(expense) {
+		const marginLeft = (isMobile ? 0 : '2em');
+
 		return [
-			<Link to={`/purchases/${moment().format('YYYY-MM')}/by-expense/${expense.id}`} style={{marginLeft: '2em'}}>
-				{expense.name}
+			<Link to={`/purchases/${moment().format('YYYY-MM')}/by-expense/${expense.id}`} style={{marginLeft}}>
+				{isMobile ? '\u2014' : ''} {expense.name}
 			</Link>,
 			formatDollarAmount(expense.cost),
 			formatDollarAmount(expense.monthlyCost),
@@ -70,7 +77,7 @@ class ExpensesTable extends React.Component {
 	////////////////////////////////////////
 
 	render() {
-		const headers = [
+		let headers = [
 			{ label: 'Name' },
 			{ label: 'Cost', justification: 'right' },
 			{ label: 'Monthly Cost', justification: 'right' },
@@ -81,9 +88,9 @@ class ExpensesTable extends React.Component {
 			{ label: '', justification: 'center' }
 		];
 
-		const data = this.getTableRows(this.props.expenseCategories);
+		let data = this.getTableRows(this.props.expenseCategories);
 
-		const footers = [[
+		let footers = [[
 			'Total Budgeted Monthly',
 			null,
 			formatDollarAmount(this.props.expenseCategories.reduce((total, category) => {
@@ -94,6 +101,18 @@ class ExpensesTable extends React.Component {
 			null,
 			null
 		]];
+
+		if (isMobile) {
+			const indices = [0, 2];
+
+			headers = pickArrayIndices(headers, indices);
+
+			data = data.map((row) => {
+				return pickArrayIndices(row, indices);
+			});
+
+			footers = [pickArrayIndices(footers[0], indices)];
+		}
 
 		return <Table headers={headers} data={data} footers={footers} />;
 	}
