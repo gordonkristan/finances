@@ -1,14 +1,14 @@
 import _ from 'lodash';
 import React from 'react';
 import moment from 'moment';
-import Expense from 'app/models/expense';
 import Form from 'app/components/util/Form';
+import ExpenseCategory from 'app/models/expense-category';
 
 class AddPurchase extends React.Component {
 
 	static propTypes = {
 		models: React.PropTypes.shape({
-			expenses: React.PropTypes.arrayOf(React.PropTypes.instanceOf(Expense)).isRequired
+			expenseCategories: React.PropTypes.arrayOf(React.PropTypes.instanceOf(ExpenseCategory)).isRequired
 		}).isRequired
 	};
 
@@ -17,7 +17,7 @@ class AddPurchase extends React.Component {
 
 		this.state = {
 			cost: 0,
-			expenseId: props.models.expenses[0].id,
+			expenseId: props.models.expenseCategories[0].id,
 			description: '',
 			date: moment()
 		};
@@ -27,20 +27,30 @@ class AddPurchase extends React.Component {
 
 	onValueUpdated(name, value) {
 		if (name === 'expenseId') {
-			const expense = this.props.models.expenses.find(({ id }) => {
-				return (id === value);
-			});
+			const expense = this.findExpense(value);
 
 			// If it's a fixed cost, pre-populate it
-			if (expense.fixedCost) {
+			if (expense && expense.fixedCost) {
 				this.setState({
 					expenseId: value,
 					cost: expense.cost
 				});
+
+				return;
 			}
 		}
 
 		this.setState({ [name]: value });
+	}
+
+	findExpense(expenseId) {
+		const { expenseCategories } = this.props.models;
+
+		for (let category of expenseCategories) {
+			if (category.hasExpense(expenseId)) {
+				return category.getExpense(expenseId);
+			}
+		}
 	}
 
 	add() {
@@ -61,7 +71,7 @@ class AddPurchase extends React.Component {
 	////////////////////////////////////////
 
 	render() {
-		const { expenses } = this.props.models;
+		const { expenseCategories } = this.props.models;
 		const { cost, expenseId, description, date } = this.state;
 
 		const fields = [
@@ -75,9 +85,17 @@ class AddPurchase extends React.Component {
 				type: 'select',
 				name: 'expenseId',
 				title: 'Expense',
-				options: expenses.map(({ id, name }) => {
-					return { title: name, value: id };
-				}),
+				options: _(expenseCategories).
+					map((category) => {
+						return category.expenses.map((expense) => {
+							return {
+								title: category.name + ' - ' + expense.name,
+								value: expense.id
+							};
+						});
+					}).
+					flatten().
+					value(),
 				value: expenseId
 			},
 			{
